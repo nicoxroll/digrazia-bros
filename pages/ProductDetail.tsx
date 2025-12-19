@@ -91,6 +91,7 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
   const [visualPrompt, setVisualPrompt] = useState('');
   const [visualResult, setVisualResult] = useState<string | null>(null);
   const [isVisualizing, setIsVisualizing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const scrollY = useParallax();
 
@@ -103,6 +104,7 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setError(null);
       const reader = new FileReader();
       reader.onloadend = () => setRoomImage(reader.result as string);
       reader.readAsDataURL(file);
@@ -112,16 +114,27 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
   const handleVisualize = async () => {
     if (!roomImage) return;
     setIsVisualizing(true);
+    setError(null);
     try {
       const furnitureB64 = await GeminiService.urlToBase64(product.image);
       const result = await GeminiService.visualizeInSpace(roomImage, product, visualPrompt, furnitureB64);
       setVisualResult(result);
     } catch (err) {
       console.error(err);
-      alert("IA simulation encountered an issue. Please try later.");
+      setError("IA simulation encountered an issue. Please try later.");
     } finally {
       setIsVisualizing(false);
     }
+  };
+
+  const handleDownload = () => {
+    if (!visualResult) return;
+    const link = document.createElement('a');
+    link.href = visualResult;
+    link.download = `digrazia-bros-visualization-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -180,12 +193,40 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
                   {roomImage ? <img src={roomImage} className="w-full h-full object-cover" alt="Your room" /> : <p className="text-sm font-bold text-nude-300">Upload Room Photo</p>}
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                 </div>
+                
+                {error && (
+                  <div className="bg-white border-l-4 border-red-400 p-6 shadow-xl rounded-r-2xl animate-in fade-in slide-in-from-bottom-4">
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 bg-red-50 rounded-full text-red-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                      </div>
+                      <div>
+                        <p className="font-serif text-red-900 font-bold text-lg">Simulation Issue</p>
+                        <p className="text-nude-400 text-sm">{error}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <button onClick={handleVisualize} disabled={!roomImage || isVisualizing} className="w-full bg-nude-500 text-white py-6 rounded-full font-bold uppercase tracking-widest">
                   {isVisualizing ? 'Simulating...' : 'Visualize in My Space'}
                 </button>
               </div>
-              <div className="aspect-square bg-white rounded-[4rem] shadow-2xl overflow-hidden relative border-8 border-white">
-                {visualResult ? <img src={visualResult} className="w-full h-full object-cover animate-in fade-in" alt="Result" /> : <div className="w-full h-full flex items-center justify-center italic text-nude-200">Your render appears here</div>}
+              <div className="aspect-square bg-white rounded-[4rem] shadow-2xl overflow-hidden relative border-8 border-white group">
+                {visualResult ? (
+                  <>
+                    <img src={visualResult} className="w-full h-full object-cover animate-in fade-in" alt="Result" />
+                    <button 
+                      onClick={handleDownload}
+                      className="absolute bottom-8 right-8 bg-white text-nude-500 p-4 rounded-full shadow-xl hover:bg-pastel-clay hover:text-white transition-all opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 duration-300 z-20"
+                      title="Download Visualization"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    </button>
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center italic text-nude-200">Your render appears here</div>
+                )}
                 {isVisualizing && <div className="absolute inset-0 bg-white/70 backdrop-blur-md flex items-center justify-center animate-pulse" />}
               </div>
             </div>
