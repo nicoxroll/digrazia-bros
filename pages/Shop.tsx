@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../types';
 import { PRODUCTS } from '../constants';
+import { useParallax } from '../hooks/useParallax';
 
 const ExpandingGridRow: React.FC<{ products: Product[], onAddToCart: (p: Product) => void }> = ({ products, onAddToCart }) => {
   return (
@@ -11,6 +12,7 @@ const ExpandingGridRow: React.FC<{ products: Product[], onAddToCart: (p: Product
         <Link 
           to={`/product/${p.id}`} 
           key={p.id} 
+          onClick={() => { window.scrollTo(0, 0); window.lenis?.scrollTo(0, { immediate: true }); }}
           className="group relative flex-[1] hover:flex-[3] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden border-r last:border-0 border-white/10"
         >
           <img src={p.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={p.name} />
@@ -54,20 +56,25 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToC
     return chunks;
   }, [filteredProducts]);
 
+  const scrollY = useParallax();
+
   return (
     <div className="pb-24">
-      <section className="relative h-[80vh] flex items-center px-8 overflow-hidden mb-24">
+      <section className="relative h-screen flex items-center px-8 overflow-hidden mb-24">
         <div 
           className="absolute inset-0 z-0 scale-105" 
           style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1491926626787-62db157af940?q=80&w=2070&auto=format&fit=crop")',
+            backgroundImage: 'url("https://images.pexels.com/photos/3614082/pexels-photo-3614082.jpeg")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
+            transform: `translateY(${scrollY * 0.5}px)`,
           }}
         />
         <div className="absolute inset-0 bg-black/40 z-[1]" />
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
+        <div 
+          className="relative z-10 max-w-4xl mx-auto text-center"
+          style={{ transform: `translateY(${scrollY * -0.2}px)` }}
+        >
           <h2 className="font-serif text-8xl md:text-[10rem] text-white mb-6 drop-shadow-xl font-bold tracking-tighter">Collections</h2>
         </div>
       </section>

@@ -1,10 +1,17 @@
 
-import React, { useRef, forwardRef } from 'react';
+import React, { useRef, forwardRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../types';
 import { PRODUCTS } from '../constants';
 import { SmoothReveal } from '../components/ui/SmoothReveal';
 import { ScrollingFashionMarquee } from '../components/ui/ScrollingFashionMarquee';
+import { useParallax } from '../hooks/useParallax';
+
+declare global {
+  interface Window {
+    L: any;
+  }
+}
 
 const ExpandingGridRow: React.FC<{ products: Product[], onAddToCart: (p: Product) => void }> = ({ products, onAddToCart }) => {
   return (
@@ -13,6 +20,7 @@ const ExpandingGridRow: React.FC<{ products: Product[], onAddToCart: (p: Product
         <Link 
           to={`/product/${p.id}`} 
           key={p.id} 
+          onClick={() => { window.scrollTo(0, 0); window.lenis?.scrollTo(0, { immediate: true }); }}
           className="group relative flex-[1] hover:flex-[3] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden border-r last:border-0 border-white/10"
         >
           <img src={p.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={p.name} />
@@ -40,6 +48,71 @@ const ExpandingGridRow: React.FC<{ products: Product[], onAddToCart: (p: Product
 };
 
 const ContactUs = forwardRef<HTMLElement>((props, ref) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    const loadLeaflet = async () => {
+      if (!window.L) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(link);
+
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        await new Promise((resolve) => {
+          script.onload = resolve;
+          document.head.appendChild(script);
+        });
+      }
+
+      const L = window.L;
+      if (!mapInstanceRef.current) {
+        // Plaza Moreno coordinates
+        const lat = -34.9213;
+        const lng = -57.9566;
+        
+        mapInstanceRef.current = L.map(mapRef.current, {
+          center: [lat, lng],
+          zoom: 15,
+          scrollWheelZoom: false,
+          zoomControl: false
+        });
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 20
+        }).addTo(mapInstanceRef.current);
+
+        // Custom Icon using favicon
+        const icon = L.icon({
+          iconUrl: '/icon-cream.svg',
+          iconSize: [40, 40],
+          iconAnchor: [20, 20],
+          popupAnchor: [0, -20],
+          className: 'drop-shadow-lg'
+        });
+
+        L.marker([lat, lng], { icon }).addTo(mapInstanceRef.current)
+          .bindPopup('<div class="text-center font-serif"><h3 class="font-bold">Digrazia Brothers</h3><p class="text-sm">Plaza Moreno</p></div>')
+          .openPopup();
+      }
+    };
+
+    loadLeaflet();
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
   return (
     <section ref={ref} className="py-40 px-8 bg-nude-50 overflow-hidden border-t border-nude-100">
       <div className="max-w-7xl mx-auto">
@@ -85,16 +158,7 @@ const ContactUs = forwardRef<HTMLElement>((props, ref) => {
 
           <div className="relative group">
              <div className="aspect-square bg-white rounded-[4rem] overflow-hidden shadow-2xl border-8 border-white relative z-10">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3271.272!2d-57.9566!3d-34.9213!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95a2e62b1f000001%3A0x6d9d068565578a10!2sPlaza%20Moreno!5e0!3m2!1sen!2sar!4v1709500000000!5m2!1sen!2sar" 
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0 }} 
-                  allowFullScreen={true} 
-                  loading="lazy" 
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="grayscale hover:grayscale-0 transition-all duration-700"
-                ></iframe>
+                <div ref={mapRef} className="w-full h-full grayscale hover:grayscale-0 transition-all duration-700 z-10" style={{ minHeight: '400px' }} />
              </div>
              <div className="absolute -top-12 -left-12 w-64 h-64 bg-pastel-rose opacity-20 rounded-[4rem] -z-0"></div>
           </div>
@@ -108,6 +172,7 @@ ContactUs.displayName = 'ContactUs';
 export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: React.RefObject<HTMLElement> }> = ({ onAddToCart, contactRef }) => {
   const aboutRef = useRef<HTMLElement>(null);
   const featured = PRODUCTS.slice(0, 4);
+  const scrollY = useParallax();
 
   return (
     <div className="pb-0">
@@ -118,12 +183,15 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
             backgroundImage: 'url("https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=2532&auto=format&fit=crop")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
+            transform: `translateY(${scrollY * 0.5}px)`,
           }}
         />
         <div className="absolute inset-0 bg-black/30 z-[1]" />
         
-        <div className="relative z-10 max-w-4xl mx-auto text-center animate-in fade-in zoom-in duration-1000 mt-24">
+        <div 
+          className="relative z-10 max-w-4xl mx-auto text-center animate-in fade-in zoom-in duration-1000 mt-24"
+          style={{ transform: `translateY(${scrollY * -0.2}px)` }}
+        >
           <h1 className="font-serif text-7xl md:text-[10rem] text-white mb-8 leading-none drop-shadow-2xl font-bold tracking-tighter">
             Digrazia <br /> 
             <span className="italic font-light">Elegance</span>
@@ -164,8 +232,12 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
       
       <ScrollingFashionMarquee />
 
-      <section className="bg-white">
-        <div className="max-w-[1920px] mx-auto pt-40 px-8 mb-16 flex justify-between items-end">
+      <section className="bg-nude-100 min-h-screen flex flex-col justify-center relative overflow-hidden">
+        <div 
+            className="absolute top-0 right-0 w-[500px] h-[500px] bg-pastel-clay/10 rounded-full blur-3xl -z-0"
+            style={{ transform: `translateY(${scrollY * 0.1}px)` }}
+        />
+        <div className="max-w-[1920px] mx-auto pt-20 px-8 mb-16 flex justify-between items-end relative z-10">
             <div className="space-y-4">
                <span className="text-pastel-clay uppercase tracking-[0.4em] font-bold text-xs">Exclusives</span>
                <h2 className="font-serif text-6xl text-nude-500 font-bold tracking-tight">Featured Curations</h2>
@@ -173,7 +245,9 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
             <Link to="/shop" className="text-nude-500 font-bold tracking-widest uppercase text-sm border-b-2 border-nude-500 pb-2 hover:text-pastel-clay hover:border-pastel-clay transition-all">View Full Gallery &rarr;</Link>
         </div>
         
-        <ExpandingGridRow products={featured} onAddToCart={onAddToCart} />
+        <div className="relative z-10">
+            <ExpandingGridRow products={featured} onAddToCart={onAddToCart} />
+        </div>
       </section>
 
       <section className="py-40 px-8 bg-nude-50">
@@ -201,6 +275,27 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
               </SmoothReveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+        <div 
+          className="absolute inset-0 z-0" 
+          style={{ 
+            backgroundImage: 'url("https://images.pexels.com/photos/14615942/pexels-photo-14615942.jpeg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            transform: `translateY(${scrollY * 0.3}px)`,
+          }}
+        />
+        <div className="absolute inset-0 bg-black/40 z-[1]" />
+        <div className="relative z-10 text-center max-w-2xl px-8">
+            <span className="text-white/80 uppercase tracking-[0.4em] font-bold text-sm block mb-6">Stay Inspired</span>
+            <h2 className="font-serif text-5xl md:text-7xl text-white font-bold mb-8">Join the <span className="italic font-light">Atelier</span></h2>
+            <div className="flex flex-col sm:flex-row gap-4">
+                <input type="email" placeholder="Email Address" className="flex-1 bg-white/10 backdrop-blur-md border border-white/30 rounded-full px-8 py-4 text-white placeholder:text-white/60 focus:outline-none focus:bg-white/20 transition-all" />
+                <button className="bg-white text-nude-500 px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all">Subscribe</button>
+            </div>
         </div>
       </section>
 

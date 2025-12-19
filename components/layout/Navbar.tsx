@@ -25,18 +25,22 @@ export const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, solid, on
       isSolid ? 'bg-white/95 backdrop-blur-md border-b border-nude-100 shadow-sm py-4' : 'bg-transparent py-6'
     }`}>
       <div className="max-w-[1920px] mx-auto px-8 flex items-center justify-between">
-        <Link to="/" className={`font-serif text-3xl font-bold tracking-tighter transition-colors duration-500 ${
+        <Link 
+          to="/" 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className={`font-serif text-3xl font-bold tracking-tighter transition-colors duration-500 flex items-center gap-3 ${
           isSolid ? 'text-nude-500' : 'text-white drop-shadow-md'
         }`}>
-          DIGRAZIA <span className="font-light">Bros.</span>
+          <img src="/icon-cream.svg" alt="Digrazia Bros" className="h-8 w-8" />
+          <span>DIGRAZIA <span className="font-light">Bros.</span></span>
         </Link>
         
         <div className={`hidden md:flex items-center gap-12 text-sm font-bold uppercase tracking-widest transition-colors duration-500 ${
           isSolid ? 'text-nude-400' : 'text-white/90 drop-shadow-sm'
         }`}>
-          <Link to="/" className="hover:text-pastel-clay transition-colors">Home Studio</Link>
-          <Link to="/shop" className="hover:text-pastel-clay transition-colors">Collections</Link>
-          <button onClick={onContactClick} className="hover:text-pastel-clay transition-colors uppercase tracking-widest font-bold">Studio Contact</button>
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-pastel-clay transition-colors">Home</Link>
+          <Link to="/shop" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-pastel-clay transition-colors">Collections</Link>
+          <button onClick={onContactClick} className="hover:text-pastel-clay transition-colors uppercase tracking-widest font-bold">Contact</button>
         </div>
 
         <div className="flex items-center gap-8">

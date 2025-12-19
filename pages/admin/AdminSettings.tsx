@@ -67,7 +67,7 @@ export const AdminSettings: React.FC = () => {
                 <select className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20">
                   <option>Gemini 3 Flash (Fast)</option>
                   <option>Gemini 3 Pro (Expert)</option>
-                  <option>Nano Banana (Image Gen)</option>
+                  <option>Gemini 3 Image (Visuals)</option>
                 </select>
               </div>
               <div className="space-y-2">

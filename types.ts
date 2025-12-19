@@ -18,6 +18,7 @@ export interface CartItem extends Product {
 export interface Message {
   role: 'user' | 'assistant';
   content: string;
+  image?: string;
   isThinking?: boolean;
 }
 

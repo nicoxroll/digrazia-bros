@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Product } from '../types';
 import { PRODUCTS } from '../constants';
 import { GeminiService } from '../services/geminiService';
+import { useParallax } from '../hooks/useParallax';
 
 const Lightbox: React.FC<{ 
   images: string[], 
@@ -75,11 +76,6 @@ const ExpandingImageRow: React.FC<{ images: string[], onImageClick: (idx: number
         >
           <img src={img} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={`View ${i}`} />
           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="bg-white/10 backdrop-blur-md p-6 rounded-full border border-white/20">
-               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-            </div>
-          </div>
         </div>
       ))}
     </div>
@@ -96,6 +92,7 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
   const [visualResult, setVisualResult] = useState<string | null>(null);
   const [isVisualizing, setIsVisualizing] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const scrollY = useParallax();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -141,7 +138,12 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
 
       <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-nude-50">
         <div className="absolute inset-0">
-          <img src={product.image} className="w-full h-full object-cover" alt={product.name} />
+          <img 
+            src={product.image} 
+            className="w-full h-full object-cover" 
+            alt={product.name} 
+            style={{ transform: `translateY(${scrollY * 0.5}px) scale(1.1)` }}
+          />
           <div className="absolute inset-0 bg-black/15 pointer-events-none" />
         </div>
         <div className="absolute bottom-16 left-8 lg:left-24 z-10 max-w-xl">

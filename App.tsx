@@ -1,6 +1,7 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MemoryRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import Lenis from 'lenis';
 
 import { Product, CartItem } from './types';
 import { Navbar } from './components/layout/Navbar';
@@ -21,6 +22,13 @@ import { AdminInventory } from './pages/admin/AdminInventory';
 import { AdminSales } from './pages/admin/AdminSales';
 import { AdminSettings } from './pages/admin/AdminSettings';
 
+declare global {
+  interface Window {
+    L: any;
+    lenis: any;
+  }
+}
+
 const AppContent: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -30,6 +38,30 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const contactRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+    });
+
+    window.lenis = lenis;
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+      window.lenis = null;
+    };
+  }, []);
 
   const scrollToContact = () => {
     if (location.pathname !== '/') {

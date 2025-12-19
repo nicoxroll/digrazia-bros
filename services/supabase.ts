@@ -55,13 +55,37 @@ export const InventoryService = {
   },
 
   async uploadImage(file: File) {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
+    // Convert to WebP and compress
+    const webpBlob = await new Promise<Blob>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('WebP conversion failed'));
+        }, 'image/webp', 0.8); // 0.8 quality for efficiency
+      };
+      img.onerror = (e) => reject(e);
+      img.src = URL.createObjectURL(file);
+    });
+
+    const fileName = `${Math.random()}.webp`;
     const filePath = `${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from('products')
-      .upload(filePath, file);
+      .upload(filePath, webpBlob, {
+        contentType: 'image/webp',
+        cacheControl: '3600'
+      });
 
     if (uploadError) {
       throw uploadError;
