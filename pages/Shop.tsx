@@ -72,10 +72,10 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToC
         />
         <div className="absolute inset-0 bg-black/40 z-[1]" />
         <div 
-          className="relative z-10 max-w-4xl mx-auto text-center"
+          className="relative z-10 max-w-4xl mx-auto text-center px-4"
           style={{ transform: `translateY(${scrollY * -0.2}px)` }}
         >
-          <h2 className="font-serif text-8xl md:text-[10rem] text-white mb-6 drop-shadow-xl font-bold tracking-tighter">Collections</h2>
+          <h2 className="font-serif text-5xl sm:text-7xl md:text-[10rem] text-white mb-6 drop-shadow-xl font-bold tracking-tighter">Collections</h2>
         </div>
       </section>
 

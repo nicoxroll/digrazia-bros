@@ -65,25 +65,25 @@ export const ChatWidget: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
       {isOpen ? (
-        <div className="w-96 h-[550px] flex flex-col bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-nude-200 animate-in slide-in-from-bottom-5 duration-300">
-          <div className="p-6 bg-nude-100 flex justify-between items-center border-b border-nude-200">
+        <div className="w-[90vw] sm:w-96 h-[80vh] sm:h-[550px] max-h-[600px] flex flex-col bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-nude-200 animate-in slide-in-from-bottom-5 duration-300">
+          <div className="p-4 sm:p-6 bg-nude-100 flex justify-between items-center border-b border-nude-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-nude-200">
-                 <img src="/icon-cream.svg" alt="Concierge" className="w-6 h-6" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-nude-200">
+                 <img src="/icon-cream.svg" alt="Concierge" className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <h3 className="font-serif font-bold text-nude-500 text-lg">Studio Concierge</h3>
-                <p className="text-[10px] uppercase tracking-widest text-nude-400 font-bold">Live Assistance</p>
+                <h3 className="font-serif font-bold text-nude-500 text-base sm:text-lg">Studio Concierge</h3>
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-nude-400 font-bold">Live Assistance</p>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-nude-200 rounded-full transition-colors text-nude-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
           </div>
 
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-white">
             {messages.map((m, i) => (
               <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
                 <span className="text-[9px] uppercase tracking-widest font-bold text-nude-300 mb-1 px-2">
@@ -146,7 +146,7 @@ export const ChatWidget: React.FC = () => {
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="w-16 h-16 bg-nude-500 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group border-4 border-white overflow-hidden"
+          className="w-16 h-16 bg-nude-500 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group overflow-hidden"
         >
           <img src="/icon-cream.svg" alt="Chat" className="w-8 h-8 brightness-0 invert" />
         </button>

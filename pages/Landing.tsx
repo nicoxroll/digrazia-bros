@@ -169,6 +169,53 @@ const ContactUs = forwardRef<HTMLElement>((props, ref) => {
 });
 ContactUs.displayName = 'ContactUs';
 
+const Newsletter: React.FC = () => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = document.getElementById('newsletter');
+      if (section) {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const scrollPosition = window.scrollY;
+        
+        if (scrollPosition > sectionTop - window.innerHeight && 
+            scrollPosition < sectionTop + sectionHeight) {
+          setScrollY(scrollPosition - sectionTop + window.innerHeight);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+      <section id="newsletter" className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+        <div 
+          className="absolute inset-0 z-0" 
+          style={{ 
+            backgroundImage: 'url("https://images.pexels.com/photos/7034299/pexels-photo-7034299.jpeg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            transform: `translateY(${(scrollY * 0.1) - 80}px) scale(1.25)`,
+          }}
+        />
+        <div className="absolute inset-0 bg-black/40 z-[1]" />
+        <div className="relative z-10 text-center max-w-2xl px-8">
+            <span className="text-white/80 uppercase tracking-[0.4em] font-bold text-sm block mb-6">Stay Inspired</span>
+            <h2 className="font-serif text-5xl md:text-7xl text-white font-bold mb-8">Join the <span className="italic font-light">Atelier</span></h2>
+            <div className="flex flex-col sm:flex-row gap-4">
+                <input type="email" placeholder="Email Address" className="flex-1 bg-white/10 backdrop-blur-md border border-white/30 rounded-full px-8 py-4 text-white placeholder:text-white/60 focus:outline-none focus:bg-white/20 transition-all" />
+                <button className="bg-white text-nude-500 px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all">Subscribe</button>
+            </div>
+        </div>
+      </section>
+  );
+};
+
 export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: React.RefObject<HTMLElement> }> = ({ onAddToCart, contactRef }) => {
   const aboutRef = useRef<HTMLElement>(null);
   const featured = PRODUCTS.slice(0, 4);
@@ -278,26 +325,7 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
         </div>
       </section>
 
-      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 z-0" 
-          style={{ 
-            backgroundImage: 'url("https://images.pexels.com/photos/7034299/pexels-photo-7034299.jpeg")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            transform: `translateY(${scrollY * 0.3}px)`,
-          }}
-        />
-        <div className="absolute inset-0 bg-black/40 z-[1]" />
-        <div className="relative z-10 text-center max-w-2xl px-8">
-            <span className="text-white/80 uppercase tracking-[0.4em] font-bold text-sm block mb-6">Stay Inspired</span>
-            <h2 className="font-serif text-5xl md:text-7xl text-white font-bold mb-8">Join the <span className="italic font-light">Atelier</span></h2>
-            <div className="flex flex-col sm:flex-row gap-4">
-                <input type="email" placeholder="Email Address" className="flex-1 bg-white/10 backdrop-blur-md border border-white/30 rounded-full px-8 py-4 text-white placeholder:text-white/60 focus:outline-none focus:bg-white/20 transition-all" />
-                <button className="bg-white text-nude-500 px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all">Subscribe</button>
-            </div>
-        </div>
-      </section>
+      <Newsletter />
 
       <ContactUs ref={contactRef} />
     </div>

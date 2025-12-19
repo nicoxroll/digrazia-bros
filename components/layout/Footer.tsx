@@ -8,7 +8,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onContactClick }) => {
   return (
-    <footer className="bg-[#0f0f0f] py-32 px-8 border-t border-nude-900 text-white">
+    <footer className="bg-[#1a120b] py-32 px-8 border-t border-nude-900 text-white">
       <div className="max-w-[1920px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-24">
         <div className="space-y-8">
           <h4 className="font-serif text-4xl font-bold tracking-tighter text-white">DIGRAZIA <span className="font-light text-pastel-clay">Bros.</span></h4>
