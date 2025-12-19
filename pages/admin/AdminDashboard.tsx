@@ -34,11 +34,11 @@ export const AdminDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {stats.map((stat, i) => (
-          <div key={i} className={`${stat.color} p-10 rounded-[3rem] border border-nude-100 space-y-4 shadow-sm transition-transform hover:-translate-y-1`}>
-            <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-nude-300">{stat.label}</p>
-            <div className="flex items-end justify-between">
-              <h4 className="font-serif text-4xl font-bold text-nude-500">{stat.value}</h4>
-              <span className="text-[10px] font-bold text-pastel-clay">{stat.trend}</span>
+          <div key={i} className={`${stat.color} p-6 lg:p-8 rounded-[3rem] border border-nude-100 space-y-4 shadow-sm transition-transform hover:-translate-y-1 overflow-hidden`}>
+            <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-nude-300 truncate">{stat.label}</p>
+            <div className="flex flex-wrap items-end justify-between gap-2">
+              <h4 className="font-serif text-3xl lg:text-4xl font-bold text-nude-500 break-words">{stat.value}</h4>
+              <span className="text-[10px] font-bold text-pastel-clay shrink-0">{stat.trend}</span>
             </div>
           </div>
         ))}

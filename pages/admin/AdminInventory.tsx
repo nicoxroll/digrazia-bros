@@ -1,10 +1,12 @@
 
-import React, { useState, useMemo, useRef } from 'react';
-import { PRODUCTS } from '../../constants';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { InventoryService } from '../../services/supabase';
 import { Product } from '../../types';
 import { Modal } from '../../components/ui/Modal';
 
 export const AdminInventory: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
@@ -14,35 +16,108 @@ export const AdminInventory: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      setIsLoading(true);
+      const data = await InventoryService.getProducts();
+      setProducts(data || []);
+    } catch (error) {
+      console.error('Error loading products:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter(p => {
+    return products.filter(p => {
       const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = categoryFilter === 'All' || p.category === categoryFilter;
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, categoryFilter]);
+  }, [searchTerm, categoryFilter, products]);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const paginatedProducts = filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const ProductForm = ({ initialData }: { initialData?: Product | null }) => {
+  const ProductForm = ({ initialData, onSuccess }: { initialData?: Product | null, onSuccess: () => void }) => {
+    const [name, setName] = useState(initialData?.name || '');
+    const [category, setCategory] = useState(initialData?.category || 'Living Room');
+    const [price, setPrice] = useState(initialData?.price || 0);
+    const [description, setDescription] = useState(initialData?.description || '');
     const [gallery, setGallery] = useState<string[]>(initialData?.images || []);
     const [primaryIndex, setPrimaryIndex] = useState(0);
     const [stock, setStock] = useState(initialData?.stock || 0);
     const [isUploading, setIsUploading] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [lastUploadedUrl, setLastUploadedUrl] = useState<string | null>(null);
+    const [isUrlInputOpen, setIsUrlInputOpen] = useState(false);
+    const [urlInput, setUrlInput] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleAddImage = (url: string) => {
       if (url) setGallery([...gallery, url]);
     };
 
     const handleUploadClick = () => {
+      fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
       setIsUploading(true);
-      // Simulate Supabase upload with a slight delay
-      setTimeout(() => {
-        const simulatedUrl = `https://images.unsplash.com/photo-${Math.floor(Math.random()*10000000)}?q=80&w=2000&auto=format&fit=crop`;
-        handleAddImage(simulatedUrl);
+      setLastUploadedUrl(null);
+      try {
+        const url = await InventoryService.uploadImage(file);
+        if (url) {
+          handleAddImage(url);
+          setLastUploadedUrl(url);
+        }
+      } catch (error) {
+        console.error('Upload failed:', error);
+        alert('Upload failed. Please try again.');
+      } finally {
         setIsUploading(false);
-      }, 1200);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    };
+
+    const handleSubmit = async () => {
+      if (!name || !price) {
+        alert('Please fill in required fields');
+        return;
+      }
+
+      setIsSaving(true);
+      try {
+        const productData = {
+          name,
+          category: category as any,
+          price,
+          description,
+          images: gallery,
+          image: gallery[primaryIndex] || gallery[0] || '',
+          stock,
+          rating: initialData?.rating || 5
+        };
+
+        if (initialData) {
+          await InventoryService.updateProduct(initialData.id, productData);
+        } else {
+          await InventoryService.addProduct(productData);
+        }
+        onSuccess();
+      } catch (error) {
+        console.error('Save failed:', error);
+        alert('Failed to save product');
+      } finally {
+        setIsSaving(false);
+      }
     };
 
     return (
@@ -61,11 +136,11 @@ export const AdminInventory: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Piece Name</label>
-            <input defaultValue={initialData?.name} type="text" placeholder="e.g. Velvet Armchair" className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20" />
+            <input value={name} onChange={e => setName(e.target.value)} type="text" placeholder="e.g. Velvet Armchair" className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20" />
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Category</label>
-            <select defaultValue={initialData?.category} className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20">
+            <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20">
               <option>Living Room</option>
               <option>Bedroom</option>
               <option>Dining Room</option>
@@ -78,7 +153,7 @@ export const AdminInventory: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Price ($)</label>
-            <input defaultValue={initialData?.price} type="number" className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20" />
+            <input value={price} onChange={e => setPrice(parseFloat(e.target.value))} type="number" className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20" />
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Stock Inventory</label>
@@ -101,18 +176,50 @@ export const AdminInventory: React.FC = () => {
 
         {/* Gallery Manager */}
         <div className="space-y-6">
-           <div className="flex justify-between items-center px-4">
+           <div className="flex flex-col gap-4 px-4">
              <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300">Gallery Assets</label>
-             <button onClick={handleUploadClick} disabled={isUploading} className="text-[10px] font-bold uppercase tracking-widest text-pastel-clay hover:underline flex items-center gap-2">
-               {isUploading ? (
-                 <>
-                   <div className="w-2 h-2 rounded-full bg-pastel-clay animate-ping" />
-                   Uploading...
-                 </>
-               ) : (
-                 'Upload to Studio +'
-               )}
-             </button>
+             
+             <input 
+               type="file" 
+               ref={fileInputRef} 
+               className="hidden" 
+               accept="image/*" 
+               onChange={handleFileChange}
+             />
+
+             {/* Improved Upload Button Area */}
+             <div 
+                className="bg-nude-50 border-2 border-dashed border-nude-200 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 transition-all hover:bg-nude-100 hover:border-pastel-clay/50 group cursor-pointer active:scale-[0.99]" 
+                onClick={!isUploading ? handleUploadClick : undefined}
+             >
+                <div className={`p-4 rounded-full bg-white shadow-sm transition-transform group-hover:scale-110 ${isUploading ? 'animate-pulse' : ''}`}>
+                    {isUploading ? (
+                        <div className="w-6 h-6 border-2 border-pastel-clay border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-pastel-clay"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    )}
+                </div>
+                <div className="text-center">
+                    <p className="text-sm font-bold text-nude-500">{isUploading ? 'Uploading to Supabase...' : 'Click to Upload Image'}</p>
+                    <p className="text-[10px] text-nude-300 mt-1">Supports JPG, PNG, WEBP</p>
+                </div>
+             </div>
+
+             {/* URL Display */}
+             {lastUploadedUrl && (
+                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                    <div className="p-2 bg-white rounded-full text-emerald-500 shadow-sm">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-0.5">Upload Successful</p>
+                        <p className="text-xs text-emerald-700 truncate font-mono select-all">{lastUploadedUrl}</p>
+                    </div>
+                    <button onClick={() => {navigator.clipboard.writeText(lastUploadedUrl)}} className="p-2 hover:bg-emerald-100 rounded-lg text-emerald-600 transition-colors" title="Copy URL">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                </div>
+             )}
            </div>
            
            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
@@ -132,24 +239,55 @@ export const AdminInventory: React.FC = () => {
                    )}
                 </div>
               ))}
-              <button 
-                onClick={() => {
-                  const url = prompt('Enter Image URL from your collection:');
-                  if (url) handleAddImage(url);
-                }}
-                className="aspect-square rounded-[2rem] border-2 border-dashed border-nude-200 flex flex-col items-center justify-center hover:border-pastel-clay hover:bg-nude-50 transition-all gap-2 group"
-              >
-                <div className="w-12 h-12 rounded-full bg-nude-50 flex items-center justify-center text-nude-200 group-hover:text-pastel-clay transition-colors shadow-sm">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-nude-200 group-hover:text-nude-400">Add via URL</span>
-              </button>
+              {isUrlInputOpen ? (
+                 <div className="aspect-square rounded-[2rem] border-2 border-nude-200 bg-nude-50 p-4 flex flex-col justify-center gap-3 animate-in zoom-in-95 duration-300">
+                    <label className="text-[8px] font-bold uppercase tracking-widest text-nude-300">Image URL</label>
+                    <input 
+                      autoFocus
+                      type="text" 
+                      value={urlInput}
+                      onChange={(e) => setUrlInput(e.target.value)}
+                      placeholder="https://..."
+                      className="w-full bg-white border border-nude-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-pastel-clay/20"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                           handleAddImage(urlInput);
+                           setUrlInput('');
+                           setIsUrlInputOpen(false);
+                        }
+                        if (e.key === 'Escape') {
+                           setIsUrlInputOpen(false);
+                        }
+                      }}
+                    />
+                    <div className="flex gap-2">
+                      <button onClick={() => setIsUrlInputOpen(false)} className="flex-1 py-2 rounded-lg border border-nude-200 text-[10px] font-bold text-nude-400 hover:bg-white transition-colors">Cancel</button>
+                      <button onClick={() => { if(urlInput) { handleAddImage(urlInput); setUrlInput(''); setIsUrlInputOpen(false); } }} className="flex-1 py-2 rounded-lg bg-pastel-clay text-white text-[10px] font-bold hover:bg-nude-500 transition-colors">Add</button>
+                    </div>
+                 </div>
+              ) : (
+                <button 
+                  onClick={() => setIsUrlInputOpen(true)}
+                  className="aspect-square rounded-[2rem] border-2 border-dashed border-nude-200 flex flex-col items-center justify-center hover:border-pastel-clay hover:bg-nude-50 transition-all gap-2 group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-nude-50 flex items-center justify-center text-nude-200 group-hover:text-pastel-clay transition-colors shadow-sm">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-nude-200 group-hover:text-nude-400">Add via URL</span>
+                </button>
+              )}
            </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Artisan's Note / Description</label>
-          <textarea defaultValue={initialData?.description} placeholder="Describe the soul of this piece..." className="w-full h-40 bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20 resize-none"></textarea>
+          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the soul of this piece..." className="w-full h-40 bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20 resize-none"></textarea>
+        </div>
+        
+        <div className="flex justify-end gap-4 pt-8 border-t border-nude-100">
+           <button onClick={handleSubmit} disabled={isSaving} className="px-12 py-5 bg-nude-500 text-white rounded-full font-bold uppercase tracking-widest shadow-xl hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+             {isSaving ? 'Saving...' : (initialData ? 'Update Piece' : 'Add to Catalog')}
+           </button>
         </div>
       </div>
     );
@@ -288,18 +426,16 @@ export const AdminInventory: React.FC = () => {
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
         title="Add to Collection"
-        footer={<button onClick={() => setIsAddModalOpen(false)} className="px-12 py-5 bg-nude-500 text-white rounded-full font-bold uppercase tracking-widest shadow-xl hover:bg-black transition-all">Add to Catalog</button>}
       >
-        <ProductForm />
+        <ProductForm onSuccess={() => { setIsAddModalOpen(false); loadProducts(); }} />
       </Modal>
 
       <Modal 
         isOpen={!!editingProduct} 
         onClose={() => setEditingProduct(null)} 
         title="Refine Catalog Piece"
-        footer={<button onClick={() => setEditingProduct(null)} className="px-12 py-5 bg-nude-500 text-white rounded-full font-bold uppercase tracking-widest shadow-xl hover:bg-black transition-all">Save Changes</button>}
       >
-        <ProductForm initialData={editingProduct} />
+        <ProductForm initialData={editingProduct} onSuccess={() => { setEditingProduct(null); loadProducts(); }} />
       </Modal>
 
       <Modal 
@@ -309,7 +445,18 @@ export const AdminInventory: React.FC = () => {
         footer={
           <div className="flex gap-4">
             <button onClick={() => setDeletingProduct(null)} className="px-8 py-4 bg-white border border-nude-100 rounded-full text-nude-400 font-bold uppercase tracking-widest">Cancel</button>
-            <button onClick={() => setDeletingProduct(null)} className="px-8 py-4 bg-red-500 text-white rounded-full font-bold uppercase tracking-widest shadow-xl">Confirm Removal</button>
+            <button onClick={async () => {
+              if (deletingProduct) {
+                try {
+                  await InventoryService.deleteProduct(deletingProduct.id);
+                  loadProducts();
+                  setDeletingProduct(null);
+                } catch (error) {
+                  console.error('Delete failed:', error);
+                  alert('Failed to delete product');
+                }
+              }
+            }} className="px-8 py-4 bg-red-500 text-white rounded-full font-bold uppercase tracking-widest shadow-xl">Confirm Removal</button>
           </div>
         }
       >

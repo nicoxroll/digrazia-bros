@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import ReactMarkdown from 'https://esm.sh/react-markdown@^9.0.1';
+import ReactMarkdown from 'react-markdown';
 import { GeminiService } from '../services/geminiService';
 import { Message } from '../types';
 
