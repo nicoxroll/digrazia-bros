@@ -19,6 +19,7 @@ import { LoginPage } from './pages/admin/LoginPage';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminInventory } from './pages/admin/AdminInventory';
 import { AdminSales } from './pages/admin/AdminSales';
+import { AdminSettings } from './pages/admin/AdminSettings';
 
 const AppContent: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -72,7 +73,7 @@ const AppContent: React.FC = () => {
           <Navbar 
             cartCount={cartCount} 
             onOpenCart={() => setIsCartOpen(true)} 
-            solid={location.pathname !== '/'} 
+            solid={location.pathname !== '/' && location.pathname !== '/shop'} 
             onContactClick={scrollToContact} 
           />
         )}
@@ -89,7 +90,7 @@ const AppContent: React.FC = () => {
             <Route path="/admin/dashboard" element={adminUser ? <AdminDashboard /> : <LoginPage onLogin={setAdminUser} />} />
             <Route path="/admin/inventory" element={adminUser ? <AdminInventory /> : <LoginPage onLogin={setAdminUser} />} />
             <Route path="/admin/sales" element={adminUser ? <AdminSales /> : <LoginPage onLogin={setAdminUser} />} />
-            <Route path="/admin/settings" element={adminUser ? <div className="p-20 text-center font-serif text-3xl">Studio Settings (Mock)</div> : <LoginPage onLogin={setAdminUser} />} />
+            <Route path="/admin/settings" element={adminUser ? <AdminSettings /> : <LoginPage onLogin={setAdminUser} />} />
           </Routes>
         </main>
 
