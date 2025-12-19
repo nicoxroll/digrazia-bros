@@ -282,7 +282,7 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
         <div 
           className="absolute inset-0 z-0" 
           style={{ 
-            backgroundImage: 'url("https://images.pexels.com/photos/14615942/pexels-photo-14615942.jpeg")',
+            backgroundImage: 'url("https://images.pexels.com/photos/7034299/pexels-photo-7034299.jpeg")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             transform: `translateY(${scrollY * 0.3}px)`,
