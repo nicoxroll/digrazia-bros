@@ -1,0 +1,8 @@
+{
+  "name": "Digrazia Brothers - Artisan Furniture",
+  "description": "An elegant e-commerce platform for high-end furniture featuring AI-powered design assistants, image generation, and smart product discovery.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
