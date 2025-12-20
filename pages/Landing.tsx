@@ -284,7 +284,7 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
             className="absolute top-0 right-0 w-[500px] h-[500px] bg-pastel-clay/10 rounded-full blur-3xl -z-0"
             style={{ transform: `translateY(${scrollY * 0.1}px)` }}
         />
-        <div className="max-w-[1920px] mx-auto pt-20 px-8 mb-16 flex justify-between items-end relative z-10">
+        <div className="max-w-[1920px] mx-auto pt-20 px-8 mb-16 flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 gap-8">
             <div className="space-y-4">
                <span className="text-pastel-clay uppercase tracking-[0.4em] font-bold text-xs">Exclusives</span>
                <h2 className="font-serif text-6xl text-nude-500 font-bold tracking-tight">Featured Curations</h2>
