@@ -80,7 +80,7 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToC
       </section>
 
       <div className="max-w-[1920px] mx-auto px-8">
-        <div className="mb-16 border-b border-nude-50 pb-12">
+        <div className="mb-8 border-b border-nude-50 pb-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
             <h3 className="font-serif text-5xl text-nude-500 font-bold tracking-tight">The Gallery</h3>
             <button 

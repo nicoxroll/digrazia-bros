@@ -289,7 +289,7 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
                <span className="text-pastel-clay uppercase tracking-[0.4em] font-bold text-xs">Exclusives</span>
                <h2 className="font-serif text-6xl text-nude-500 font-bold tracking-tight">Featured Curations</h2>
             </div>
-            <Link to="/shop" className="text-nude-500 font-bold tracking-widest uppercase text-sm border-b-2 border-nude-500 pb-2 hover:text-pastel-clay hover:border-pastel-clay transition-all">View Full Gallery &rarr;</Link>
+            <Link to="/shop" className="text-nude-500 font-bold tracking-widest uppercase text-xs border-b border-nude-500 pb-1 hover:text-pastel-clay hover:border-pastel-clay transition-all">View Full Gallery &rarr;</Link>
         </div>
         
         <div className="relative z-10">
