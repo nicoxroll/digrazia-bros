@@ -253,6 +253,38 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
         </div>
       </section>
 
+      {/* Video Section */}
+      <section className="py-40 px-8 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <div className="space-y-12">
+              <span className="text-pastel-clay uppercase tracking-[0.5em] font-bold text-sm block">AI-Powered Design</span>
+              <h2 className="font-serif text-6xl md:text-8xl text-nude-500 font-bold leading-none tracking-tighter">Virtual <br/> <span className="italic font-light">Visualization.</span></h2>
+              <p className="text-2xl text-nude-400 leading-relaxed font-light italic">
+                "Experience your furniture in your space before it arrives."
+              </p>
+              <p className="text-lg text-nude-300 leading-relaxed">
+                Our generative AI technology creates photorealistic simulations, allowing you to visualize how each piece will look and feel in your home environment.
+              </p>
+            </div>
+            <div className="relative">
+              <div className="aspect-[16/10] w-full rounded-[2rem] overflow-hidden shadow-2xl">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                >
+                  <source src="/sillon.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section ref={aboutRef} className="py-40 px-8 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
