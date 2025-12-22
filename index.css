@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+
+  --color-nude-50: #FAF7F2;
+  --color-nude-100: #F5F0E8;
+  --color-nude-200: #EDE4D6;
+  --color-nude-300: #E2D4C1;
+  --color-nude-400: #D4C0A8;
+  --color-nude-500: #C2A68C;
+
+  --color-pastel-rose: #F9E4E1;
+  --color-pastel-sage: #E8F3EF;
+  --color-pastel-cream: #FFF9F2;
+  --color-pastel-clay: #D4A373;
+}
+
+body {
+  background-color: #FAF7F2; /* nude-50 */
+  color: #1a1a1a;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #C2A68C; /* nude-500 */
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D4A373; /* pastel-clay */
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}

@@ -197,7 +197,7 @@ const Newsletter: React.FC = () => {
         <div 
           className="absolute inset-0 z-0" 
           style={{ 
-            backgroundImage: 'url("https://images.pexels.com/photos/7034299/pexels-photo-7034299.jpeg")',
+            backgroundImage: 'url("/images/7034299.jpg")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             transform: `translateY(${(scrollY * 0.1) - 80}px) scale(1.25)`,

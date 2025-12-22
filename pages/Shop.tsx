@@ -64,7 +64,7 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToC
         <div 
           className="absolute inset-0 z-0 scale-105" 
           style={{ 
-            backgroundImage: 'url("https://images.pexels.com/photos/3614082/pexels-photo-3614082.jpeg")',
+            backgroundImage: 'url("/images/3614082.jpg")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             transform: `translateY(${scrollY * 0.5}px)`,

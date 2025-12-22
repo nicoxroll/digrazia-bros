@@ -16,9 +16,9 @@ export const ScrollingFashionMarquee: React.FC = () => {
     'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=800&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?q=80&w=800&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=800&auto=format&fit=crop',
-    'https://images.pexels.com/photos/2343468/pexels-photo-2343468.jpeg',
+    '/images/2343468.jpg',
     'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop',
-    'https://images.pexels.com/photos/7598133/pexels-photo-7598133.jpeg'
+    '/images/7598133.jpg'
   ];
 
   return (
