@@ -72,10 +72,16 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToC
         />
         <div className="absolute inset-0 bg-black/40 z-[1]" />
         <div 
-          className="relative z-10 max-w-4xl mx-auto text-center px-4"
+          className="relative z-10 max-w-4xl mx-auto text-center px-4 animate-in fade-in zoom-in duration-1000 mt-24"
           style={{ transform: `translateY(${scrollY * -0.2}px)` }}
         >
-          <h2 className="font-serif text-5xl sm:text-7xl md:text-[10rem] text-white mb-6 drop-shadow-xl font-bold tracking-tighter">Collections</h2>
+          <h2 className="font-serif text-5xl sm:text-7xl md:text-[8rem] text-white mb-6 drop-shadow-xl font-bold tracking-tighter">Collections</h2>
+          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-lg font-medium">
+            Discover our curated selection of artisanal furniture. Each piece tells a story of craftsmanship and timeless design.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })} className="px-8 py-4 bg-white text-nude-500 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all shadow-xl hover:scale-105">Explore Gallery</button>
+          </div>
         </div>
       </section>
 

@@ -99,7 +99,7 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
 
   if (!product) return null;
 
-  const galleryImages = [product.image, ...(product.images || [])].slice(0, 4);
+  const galleryImages = [product.image, ...(product.images || []), ...(visualResult ? [visualResult] : [])].slice(0, 4);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -159,11 +159,13 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
           />
           <div className="absolute inset-0 bg-black/15 pointer-events-none" />
         </div>
+
+        <button onClick={() => navigate(-1)} className="absolute top-24 left-8 lg:left-24 z-20 inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors drop-shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m15 18-6-6 6-6"/></svg>
+          <span className="uppercase tracking-widest text-xs font-bold">Back</span>
+        </button>
+
         <div className="absolute bottom-16 left-8 lg:left-24 z-10 max-w-xl">
-           <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors drop-shadow-md">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m15 18-6-6 6-6"/></svg>
-            <span className="uppercase tracking-widest text-xs font-bold">Back</span>
-          </button>
           <p className="text-white/70 uppercase tracking-[0.3em] font-bold text-xs mb-3 drop-shadow-sm">{product.category}</p>
           <h1 className="font-serif text-6xl lg:text-8xl text-white mb-6 font-bold tracking-tighter drop-shadow-2xl">{product.name}</h1>
           <div className="flex items-center gap-8">
@@ -193,6 +195,14 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
                   {roomImage ? <img src={roomImage} className="w-full h-full object-cover" alt="Your room" /> : <p className="text-sm font-bold text-nude-300">Upload Room Photo</p>}
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                 </div>
+
+                <textarea
+                  value={visualPrompt}
+                  onChange={(e) => setVisualPrompt(e.target.value)}
+                  placeholder="Optional: Describe how you'd like to see this furniture in your space (e.g., 'in a modern living room', 'next to a window', etc.)"
+                  className="w-full p-4 bg-white rounded-2xl border border-nude-200 focus:border-pastel-clay focus:outline-none transition-colors resize-none"
+                  rows={3}
+                />
                 
                 {error && (
                   <div className="bg-white border-l-4 border-red-400 p-6 shadow-xl rounded-r-2xl animate-in fade-in slide-in-from-bottom-4">
@@ -215,7 +225,12 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
               <div className="aspect-square bg-white rounded-[4rem] shadow-2xl overflow-hidden relative border-8 border-white group">
                 {visualResult ? (
                   <>
-                    <img src={visualResult} className="w-full h-full object-cover animate-in fade-in" alt="Result" />
+                    <img 
+                      src={visualResult} 
+                      className="w-full h-full object-cover animate-in fade-in cursor-zoom-in" 
+                      alt="Result" 
+                      onClick={() => setLightboxIndex(galleryImages.length - 1)}
+                    />
                     <button 
                       onClick={handleDownload}
                       className="absolute bottom-8 right-8 bg-white text-nude-500 p-4 rounded-full shadow-xl hover:bg-pastel-clay hover:text-white transition-all opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 duration-300 z-20"

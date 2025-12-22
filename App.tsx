@@ -105,7 +105,7 @@ const AppContent: React.FC = () => {
           <Navbar 
             cartCount={cartCount} 
             onOpenCart={() => setIsCartOpen(true)} 
-            solid={location.pathname !== '/' && location.pathname !== '/shop'} 
+            solid={location.pathname !== '/' && location.pathname !== '/shop' && !location.pathname.startsWith('/product/')} 
             onContactClick={scrollToContact} 
           />
         )}
