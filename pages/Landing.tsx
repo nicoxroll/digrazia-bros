@@ -246,9 +246,9 @@ export const Landing: React.FC<{ onAddToCart: (p: Product) => void, contactRef: 
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg font-medium">
             Artisanal furniture crafted with soul. Experience the perfect harmony of nature and design in every curve.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pb-12">
             <Link to="/shop" className="px-12 py-5 bg-white text-nude-500 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all shadow-2xl hover:scale-105">The Collection</Link>
-            <button onClick={() => aboutRef.current?.scrollIntoView({ behavior: 'smooth' })} className="px-12 py-5 bg-white/10 backdrop-blur-md text-white border border-white/40 rounded-full font-bold uppercase tracking-widest hover:bg-white/20 transition-all shadow-xl">Our Story</button>
+            <button onClick={() => window.lenis?.scrollTo(aboutRef.current)} className="px-12 py-5 bg-white/10 backdrop-blur-md text-white border border-white/40 rounded-full font-bold uppercase tracking-widest hover:bg-white/20 transition-all shadow-xl">Our Story</button>
           </div>
         </div>
       </section>

@@ -66,9 +66,9 @@ const AppContent: React.FC = () => {
   const scrollToContact = () => {
     if (location.pathname !== '/') {
       navigate('/');
-      setTimeout(() => contactRef.current?.scrollIntoView({ behavior: 'smooth' }), 300);
+      setTimeout(() => window.lenis?.scrollTo(contactRef.current), 300);
     } else {
-      contactRef.current?.scrollIntoView({ behavior: 'smooth' });
+      window.lenis?.scrollTo(contactRef.current);
     }
   };
 
