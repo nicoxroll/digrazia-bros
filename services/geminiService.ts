@@ -1,6 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 import { ImageSize, Product } from "../types";
+import { DISABLE_GEMINI } from "../constants";
 
 export class GeminiService {
   /**
@@ -21,6 +22,7 @@ export class GeminiService {
    * Fast text responses using gemini-3-flash-preview.
    */
   static async quickChat(prompt: string) {
+    if (DISABLE_GEMINI) return null;
     try {
       const ai = this.getAI();
       const response = await ai.models.generateContent({
@@ -41,6 +43,7 @@ export class GeminiService {
    * Advanced reasoning with thinking budget using gemini-3-pro-preview.
    */
   static async deepChat(prompt: string) {
+    if (DISABLE_GEMINI) return null;
     try {
       const ai = this.getAI();
       const response = await ai.models.generateContent({
@@ -62,6 +65,7 @@ export class GeminiService {
    * High-quality image generation using gemini-3-pro-image-preview.
    */
   static async generateVisual(prompt: string, size: ImageSize) {
+    if (DISABLE_GEMINI) return null;
     if (!this.isConfigured()) return null;
 
     if (typeof window !== 'undefined' && !(await (window as any).aistudio?.hasSelectedApiKey())) {
@@ -111,6 +115,7 @@ export class GeminiService {
    * Contextual image editing/placement using gemini-2.5-flash-image.
    */
   static async visualizeInSpace(roomImageBase64: string, product: Product, userPrompt: string, furnitureImageBase64: string) {
+    if (DISABLE_GEMINI) return null;
     if (!this.isConfigured()) return null;
     
     const ai = this.getAI();
