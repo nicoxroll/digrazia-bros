@@ -1,4 +1,4 @@
-import Lenis from 'lenis';
+import Lenis from "lenis";
 
 export class SmoothContainerScroll {
   private lenis: Lenis | null = null;
@@ -16,8 +16,8 @@ export class SmoothContainerScroll {
     this.lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
+      orientation: "vertical",
+      gestureOrientation: "vertical",
       smoothWheel: true,
       wrapper: this.container,
       content: this.container,

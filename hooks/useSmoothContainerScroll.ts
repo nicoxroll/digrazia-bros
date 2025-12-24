@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { SmoothContainerScroll } from '../utils/smoothScroll';
+import { useEffect, useRef } from "react";
+import { SmoothContainerScroll } from "../utils/smoothScroll";
 
 export const useSmoothContainerScroll = () => {
   const scrollRef = useRef<SmoothContainerScroll | null>(null);
