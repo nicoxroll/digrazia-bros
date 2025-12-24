@@ -1,6 +1,7 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Modal } from '../../components/ui/Modal';
+import { TableRowSkeleton } from '../../components/ui/AdminSkeletons';
 
 const MOCK_SALES = [
   { id: '1001', customer: 'Isabella Rossellini', product: 'Serene Cloud Sofa', price: 2450, date: 'Mar 12, 2024', status: 'Fulfilled' },
@@ -16,7 +17,17 @@ export const AdminSales: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 5;
+
+  // Simular carga de datos
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1200); // Simular 1.2 segundos de carga
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredSales = useMemo(() => {
     return MOCK_SALES.filter(sale => {
@@ -77,7 +88,12 @@ export const AdminSales: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-nude-50">
-              {paginatedSales.length > 0 ? paginatedSales.map(sale => (
+              {isLoading ? (
+                // Mostrar skeletons durante la carga
+                Array.from({ length: itemsPerPage }).map((_, index) => (
+                  <TableRowSkeleton key={index} />
+                ))
+              ) : paginatedSales.length > 0 ? paginatedSales.map(sale => (
                 <tr key={sale.id} className="group hover:bg-nude-50/30 transition-colors">
                   <td className="px-10 py-8 font-mono text-[10px] font-bold text-nude-200">#{sale.id}</td>
                   <td className="px-10 py-8">
@@ -144,15 +160,20 @@ export const AdminSales: React.FC = () => {
         isOpen={!!editingSale} 
         onClose={() => setEditingSale(null)} 
         title="Update Transaction Status"
-        footer={<button onClick={() => setEditingSale(null)} className="px-12 py-5 bg-nude-500 text-white rounded-full font-bold uppercase tracking-widest shadow-xl">Apply Update</button>}
+        footer={
+          <div className="flex gap-3">
+            <button onClick={() => setEditingSale(null)} className="px-6 py-3 bg-white border border-nude-100 rounded-full text-nude-400 font-bold uppercase tracking-widest hover:bg-nude-50 transition-colors">Cancel</button>
+            <button onClick={() => setEditingSale(null)} className="px-6 py-3 bg-nude-500 text-white rounded-full font-bold uppercase tracking-widest shadow-lg hover:bg-black transition-all">Apply Update</button>
+          </div>
+        }
       >
-        <div className="space-y-8">
-          <div className="p-8 bg-nude-50 rounded-3xl space-y-2">
+        <div className="space-y-6">
+          <div className="p-6 bg-nude-50 rounded-2xl space-y-3">
             <p className="text-[10px] uppercase tracking-widest font-bold text-nude-300">Client Details</p>
-            <h4 className="font-serif text-3xl text-nude-500 font-bold">{editingSale?.customer}</h4>
+            <h4 className="font-serif text-2xl text-nude-500 font-bold">{editingSale?.customer}</h4>
             <p className="text-sm text-nude-400">{editingSale?.product} • ${editingSale?.price?.toLocaleString()}</p>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Fulfillment Status</label>
             <select defaultValue={editingSale?.status} className="w-full bg-nude-50 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20">
               <option>Commissioned</option>
@@ -162,9 +183,9 @@ export const AdminSales: React.FC = () => {
               <option>Cancelled</option>
             </select>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Studio Notes</label>
-            <textarea placeholder="Add private studio observations..." className="w-full h-32 bg-nude-50 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20 resize-none"></textarea>
+            <textarea placeholder="Add private studio observations..." className="w-full h-24 bg-nude-50 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20 resize-none"></textarea>
           </div>
         </div>
       </Modal>

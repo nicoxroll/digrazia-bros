@@ -3,6 +3,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { InventoryService } from '../../services/supabase';
 import { Product } from '../../types';
 import { Modal } from '../../components/ui/Modal';
+import { TableRowSkeleton } from '../../components/ui/AdminSkeletons';
 
 export const AdminInventory: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -121,7 +122,7 @@ export const AdminInventory: React.FC = () => {
     };
 
     return (
-      <div className="space-y-12">
+      <div className="space-y-8">
         <style>{`
           input[type=number]::-webkit-inner-spin-button, 
           input[type=number]::-webkit-outer-spin-button { 
@@ -133,7 +134,7 @@ export const AdminInventory: React.FC = () => {
           }
         `}</style>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Piece Name</label>
             <input value={name} onChange={e => setName(e.target.value)} type="text" placeholder="e.g. Velvet Armchair" className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20" />
@@ -150,7 +151,7 @@ export const AdminInventory: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Price ($)</label>
             <input value={price} onChange={e => setPrice(parseFloat(e.target.value))} type="number" className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20" />
@@ -158,25 +159,25 @@ export const AdminInventory: React.FC = () => {
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Stock Inventory</label>
             <div className="flex items-center bg-nude-50 rounded-2xl overflow-hidden border border-nude-100">
-               <button onClick={() => setStock(Math.max(0, stock - 1))} className="px-6 py-4 hover:bg-nude-100 text-nude-500 transition-colors border-r border-nude-100 active:scale-95">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14"/></svg>
+               <button onClick={() => setStock(Math.max(0, stock - 1))} className="px-4 py-4 hover:bg-nude-100 text-nude-500 transition-colors border-r border-nude-100 active:scale-95">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14"/></svg>
                </button>
                <input 
                   type="number" 
                   value={stock} 
                   onChange={(e) => setStock(parseInt(e.target.value) || 0)}
-                  className="w-full bg-transparent text-center border-none outline-none font-bold text-nude-500" 
+                  className="w-full bg-transparent text-center border-none outline-none font-bold text-nude-500 text-sm" 
                 />
-               <button onClick={() => setStock(stock + 1)} className="px-6 py-4 hover:bg-nude-100 text-nude-500 transition-colors border-l border-nude-100 active:scale-95">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+               <button onClick={() => setStock(stock + 1)} className="px-4 py-4 hover:bg-nude-100 text-nude-500 transition-colors border-l border-nude-100 active:scale-95">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                </button>
             </div>
           </div>
         </div>
 
         {/* Gallery Manager */}
-        <div className="space-y-6">
-           <div className="flex flex-col gap-4 px-4">
+        <div className="space-y-4">
+           <div className="flex flex-col gap-3 px-4">
              <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300">Gallery Assets</label>
              
              <input 
@@ -189,19 +190,19 @@ export const AdminInventory: React.FC = () => {
 
              {/* Improved Upload Button Area */}
              <div 
-                className="bg-nude-50 border-2 border-dashed border-nude-200 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 transition-all hover:bg-nude-100 hover:border-pastel-clay/50 group cursor-pointer active:scale-[0.99]" 
+                className="bg-nude-50 border-2 border-dashed border-nude-200 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all hover:bg-nude-100 hover:border-pastel-clay/50 group cursor-pointer active:scale-[0.99]" 
                 onClick={!isUploading ? handleUploadClick : undefined}
              >
-                <div className={`p-4 rounded-full bg-white shadow-sm transition-transform group-hover:scale-110 ${isUploading ? 'animate-pulse' : ''}`}>
+                <div className={`p-2 rounded-full bg-white shadow-sm transition-transform group-hover:scale-110 ${isUploading ? 'animate-pulse' : ''}`}>
                     {isUploading ? (
-                        <div className="w-6 h-6 border-2 border-pastel-clay border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-pastel-clay border-t-transparent rounded-full animate-spin" />
                     ) : (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-pastel-clay"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-pastel-clay"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     )}
                 </div>
                 <div className="text-center">
-                    <p className="text-sm font-bold text-nude-500">{isUploading ? 'Uploading to Supabase...' : 'Click to Upload Image'}</p>
-                    <p className="text-[10px] text-nude-300 mt-1">Supports JPG, PNG, WEBP</p>
+                    <p className="text-xs font-bold text-nude-500">{isUploading ? 'Uploading...' : 'Click to Upload Image'}</p>
+                    <p className="text-[9px] text-nude-300">Supports JPG, PNG, WEBP</p>
                 </div>
              </div>
 
@@ -222,20 +223,20 @@ export const AdminInventory: React.FC = () => {
              )}
            </div>
            
-           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+           <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
               {gallery.map((url, i) => (
-                <div key={i} className={`group/img relative aspect-square rounded-[2rem] overflow-hidden border-4 transition-all ${primaryIndex === i ? 'border-pastel-clay shadow-xl scale-105' : 'border-white hover:border-nude-100'}`}>
+                <div key={i} className={`group/img relative aspect-square rounded-2xl overflow-hidden border-4 transition-all ${primaryIndex === i ? 'border-pastel-clay shadow-xl scale-105' : 'border-white hover:border-nude-100'}`}>
                    <img src={url} className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110" />
-                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
-                      <button onClick={() => setPrimaryIndex(i)} className={`p-3 rounded-full shadow-2xl transition-all hover:scale-110 ${primaryIndex === i ? 'bg-pastel-clay text-white' : 'bg-white text-nude-500'}`}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill={primaryIndex === i ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                      <button onClick={() => setPrimaryIndex(i)} className={`p-2 rounded-full shadow-2xl transition-all hover:scale-110 ${primaryIndex === i ? 'bg-pastel-clay text-white' : 'bg-white text-nude-500'}`}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill={primaryIndex === i ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
                       </button>
-                      <button onClick={() => setGallery(gallery.filter((_, idx) => idx !== i))} className="p-3 bg-white rounded-full text-red-400 hover:text-red-600 shadow-2xl hover:scale-110">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                      <button onClick={() => setGallery(gallery.filter((_, idx) => idx !== i))} className="p-2 bg-white rounded-full text-red-400 hover:text-red-600 shadow-2xl hover:scale-110">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                       </button>
                    </div>
                    {primaryIndex === i && (
-                     <div className="absolute top-3 left-3 bg-pastel-clay text-white px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest shadow-md">Primary Piece</div>
+                     <div className="absolute top-2 left-2 bg-pastel-clay text-white px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest shadow-md">Primary</div>
                    )}
                 </div>
               ))}
@@ -268,12 +269,12 @@ export const AdminInventory: React.FC = () => {
               ) : (
                 <button 
                   onClick={() => setIsUrlInputOpen(true)}
-                  className="aspect-square rounded-[2rem] border-2 border-dashed border-nude-200 flex flex-col items-center justify-center hover:border-pastel-clay hover:bg-nude-50 transition-all gap-2 group"
+                  className="aspect-square rounded-[2rem] border-2 border-dashed border-nude-200 flex flex-col items-center justify-center hover:border-pastel-clay hover:bg-nude-50 transition-all gap-1 group"
                 >
-                  <div className="w-12 h-12 rounded-full bg-nude-50 flex items-center justify-center text-nude-200 group-hover:text-pastel-clay transition-colors shadow-sm">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                  <div className="w-10 h-10 rounded-full bg-nude-50 flex items-center justify-center text-nude-200 group-hover:text-pastel-clay transition-colors shadow-sm">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-nude-200 group-hover:text-nude-400">Add via URL</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-nude-200 group-hover:text-nude-400">Add URL</span>
                 </button>
               )}
            </div>
@@ -281,11 +282,11 @@ export const AdminInventory: React.FC = () => {
 
         <div className="space-y-2">
           <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">Artisan's Note / Description</label>
-          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the soul of this piece..." className="w-full h-40 bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20 resize-none"></textarea>
+          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the soul of this piece..." className="w-full h-32 bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20 resize-none"></textarea>
         </div>
         
-        <div className="flex justify-end gap-4 pt-8 border-t border-nude-100">
-           <button onClick={handleSubmit} disabled={isSaving} className="px-12 py-5 bg-nude-500 text-white rounded-full font-bold uppercase tracking-widest shadow-xl hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+        <div className="flex justify-end gap-4 pt-6 border-t border-nude-100">
+           <button onClick={handleSubmit} disabled={isSaving} className="px-10 py-4 bg-nude-500 text-white rounded-full font-bold uppercase tracking-widest shadow-xl hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed">
              {isSaving ? 'Saving...' : (initialData ? 'Update Piece' : 'Add to Catalog')}
            </button>
         </div>
@@ -346,49 +347,60 @@ export const AdminInventory: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-nude-50">
-              {paginatedProducts.length > 0 ? paginatedProducts.map(p => (
-                <tr key={p.id} className="group hover:bg-nude-50/30 transition-colors">
-                  <td className="px-10 py-8">
-                    <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm border border-nude-100 relative group-hover:scale-110 transition-transform duration-500">
-                        <img src={p.image} className="w-full h-full object-cover" />
+              {isLoading ? (
+                // Mostrar skeletons mientras carga
+                <>
+                  <TableRowSkeleton />
+                  <TableRowSkeleton />
+                  <TableRowSkeleton />
+                  <TableRowSkeleton />
+                  <TableRowSkeleton />
+                </>
+              ) : paginatedProducts.length > 0 ? (
+                paginatedProducts.map(p => (
+                  <tr key={p.id} className="group hover:bg-nude-50/30 transition-colors">
+                    <td className="px-10 py-8">
+                      <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm border border-nude-100 relative group-hover:scale-110 transition-transform duration-500">
+                          <img src={p.image} className="w-full h-full object-cover" />
+                        </div>
+                        <span className="font-bold text-nude-500 text-base">{p.name}</span>
                       </div>
-                      <span className="font-bold text-nude-500 text-base">{p.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-10 py-8">
-                    <span className="text-xs uppercase tracking-widest text-nude-300 font-bold">{p.category}</span>
-                  </td>
-                  <td className="px-10 py-8">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-2.5 h-2.5 rounded-full ${p.stock < 5 ? 'bg-red-400 animate-pulse' : 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.3)]'}`} />
-                      <div className="flex flex-col">
-                        <span className={`font-bold ${p.stock < 5 ? 'text-red-400' : 'text-nude-500'}`}>{p.stock} units</span>
-                        {p.stock < 5 && <span className="text-[8px] uppercase tracking-tighter text-red-300 font-bold">Low Availability</span>}
+                    </td>
+                    <td className="px-10 py-8">
+                      <span className="text-xs uppercase tracking-widest text-nude-300 font-bold">{p.category}</span>
+                    </td>
+                    <td className="px-10 py-8">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2.5 h-2.5 rounded-full ${p.stock < 5 ? 'bg-red-400 animate-pulse' : 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.3)]'}`} />
+                        <div className="flex flex-col">
+                          <span className={`font-bold ${p.stock < 5 ? 'text-red-400' : 'text-nude-500'}`}>{p.stock} units</span>
+                          {p.stock < 5 && <span className="text-[8px] uppercase tracking-tighter text-red-300 font-bold">Low Availability</span>}
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-10 py-8">
-                    <span className="font-serif font-bold text-nude-500 text-lg">${p.price.toLocaleString()}</span>
-                  </td>
-                  <td className="px-10 py-8 text-right">
-                    <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        onClick={() => setEditingProduct(p)}
-                        className="p-3 bg-white border border-nude-100 rounded-full text-nude-300 hover:text-nude-500 hover:shadow-md transition-all active:scale-95"
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                      </button>
-                      <button 
-                        onClick={() => setDeletingProduct(p)}
-                        className="p-3 bg-white border border-nude-100 rounded-full text-nude-300 hover:text-red-500 hover:shadow-md transition-all active:scale-95"
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
+                    </td>
+                    <td className="px-10 py-8">
+                      <span className="font-serif font-bold text-nude-500 text-lg">${p.price.toLocaleString()}</span>
+                    </td>
+                    <td className="px-10 py-8 text-right">
+                      <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={() => setEditingProduct(p)}
+                          className="p-3 bg-white border border-nude-100 rounded-full text-nude-300 hover:text-nude-500 hover:shadow-md transition-all active:scale-95"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        </button>
+                        <button 
+                          onClick={() => setDeletingProduct(p)}
+                          className="p-3 bg-white border border-nude-100 rounded-full text-nude-300 hover:text-red-500 hover:shadow-md transition-all active:scale-95"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
                   <td colSpan={5} className="px-10 py-20 text-center text-nude-300 italic">No pieces found matching your criteria.</td>
                 </tr>

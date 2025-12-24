@@ -1,9 +1,10 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../types';
 import { PRODUCTS } from '../constants';
 import { useParallax } from '../hooks/useParallax';
+import { ProductGridSkeleton } from '../components/ui/ProductSkeletons';
 
 const ExpandingGridRow: React.FC<{ products: Product[], onAddToCart: (p: Product) => void }> = ({ products, onAddToCart }) => {
   return (
@@ -42,7 +43,18 @@ const ExpandingGridRow: React.FC<{ products: Product[], onAddToCart: (p: Product
 export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToCart }) => {
   const [filter, setFilter] = useState<string>('All');
   const [showFilters, setShowFilters] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const galleryRef = useRef<HTMLDivElement>(null);
   const categories = ['All', 'Living Room', 'Bedroom', 'Dining Room', 'Office', 'Decor'];
+
+  // Simular carga de productos
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500); // Simular 1.5 segundos de carga
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return filter === 'All' ? PRODUCTS : PRODUCTS.filter(p => p.category === filter);
@@ -80,12 +92,12 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToC
             Discover our curated selection of artisanal furniture. Each piece tells a story of craftsmanship and timeless design.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })} className="px-8 py-4 bg-white text-nude-500 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all shadow-xl hover:scale-105">Explore Gallery</button>
+            <button onClick={() => window.lenis?.scrollTo(galleryRef.current)} className="px-8 py-4 bg-white text-nude-500 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all shadow-xl hover:scale-105">Explore Gallery</button>
           </div>
         </div>
       </section>
 
-      <div className="max-w-[1920px] mx-auto px-8">
+      <div ref={galleryRef} className="max-w-[1920px] mx-auto px-8">
         <div className="mb-8 border-b border-nude-50 pb-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
             <h3 className="font-serif text-5xl text-nude-500 font-bold tracking-tight">The Gallery</h3>
@@ -107,9 +119,19 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToC
         </div>
 
         <div className="flex flex-col gap-1 w-full bg-nude-50">
-          {productChunks.map((chunk, idx) => (
-            <ExpandingGridRow key={idx} products={chunk} onAddToCart={onAddToCart} />
-          ))}
+          {isLoading ? (
+            // Mostrar skeletons mientras carga
+            <>
+              <ProductGridSkeleton />
+              <ProductGridSkeleton />
+              <ProductGridSkeleton />
+            </>
+          ) : (
+            // Mostrar productos cuando termina de cargar
+            productChunks.map((chunk, idx) => (
+              <ExpandingGridRow key={idx} products={chunk} onAddToCart={onAddToCart} />
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -1,14 +1,26 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PRODUCTS } from '../../constants';
+import { StatsCardSkeleton } from '../../components/ui/AdminSkeletons';
 
 export const AdminDashboard: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
   const stats = [
     { label: 'Monthly Revenue', value: '$124,500', trend: '+12%', color: 'bg-nude-50' },
     { label: 'Active Commissions', value: '42', trend: '+5', color: 'bg-pastel-sage/20' },
     { label: 'Studio Inquiries', value: '158', trend: 'High', color: 'bg-pastel-rose/20' },
     { label: 'Member Satisfaction', value: '98%', trend: 'Stable', color: 'bg-pastel-cream/50' },
   ];
+
+  // Simular carga de datos
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Simular 1 segundo de carga
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Logic for Pie Chart (Category Distribution)
   const categories = PRODUCTS.reduce((acc: any, p) => {
@@ -33,15 +45,22 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {stats.map((stat, i) => (
-          <div key={i} className={`${stat.color} p-6 lg:p-8 rounded-[3rem] border border-nude-100 space-y-4 shadow-sm transition-transform hover:-translate-y-1 overflow-hidden`}>
-            <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-nude-300 truncate">{stat.label}</p>
-            <div className="flex flex-wrap items-end justify-between gap-2">
-              <h4 className="font-serif text-3xl lg:text-4xl font-bold text-nude-500 break-words">{stat.value}</h4>
-              <span className="text-[10px] font-bold text-pastel-clay shrink-0">{stat.trend}</span>
+        {isLoading ? (
+          // Mostrar skeletons durante la carga
+          Array.from({ length: 4 }).map((_, index) => (
+            <StatsCardSkeleton key={index} />
+          ))
+        ) : (
+          stats.map((stat, i) => (
+            <div key={i} className={`${stat.color} p-6 lg:p-8 rounded-[3rem] border border-nude-100 space-y-4 shadow-sm transition-transform hover:-translate-y-1 overflow-hidden`}>
+              <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-nude-300 truncate">{stat.label}</p>
+              <div className="flex flex-wrap items-end justify-between gap-2">
+                <h4 className="font-serif text-3xl lg:text-4xl font-bold text-nude-500 break-words">{stat.value}</h4>
+                <span className="text-[10px] font-bold text-pastel-clay shrink-0">{stat.trend}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Analytics Charts Section */}

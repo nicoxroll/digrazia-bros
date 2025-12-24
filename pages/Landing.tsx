@@ -311,7 +311,7 @@ const Newsletter: React.FC = () => {
           <input
             type="email"
             placeholder="Email Address"
-            className="flex-1 bg-white/10 backdrop-blur-md border border-white/30 rounded-full px-8 py-4 text-white placeholder:text-white/60 focus:outline-none focus:bg-white/20 transition-all"
+            className="flex-1 bg-white/10 backdrop-blur-md border border-white/30 rounded-full px-8 py-4 text-white placeholder:text-white/80 focus:outline-none focus:bg-white/20 transition-all"
           />
           <button className="bg-white text-nude-500 px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all">
             Subscribe
@@ -346,18 +346,18 @@ export const Landing: React.FC<{
         <div className="absolute inset-0 bg-black/30 z-[1]" />
 
         <div
-          className="relative z-10 max-w-4xl mx-auto text-center animate-in fade-in zoom-in duration-1000 mt-24"
+          className="relative z-10 max-w-4xl mx-auto text-center animate-in fade-in zoom-in duration-1000 mt-16"
           style={{ transform: `translateY(${scrollY * -0.2}px)` }}
         >
           <h1 className="font-serif text-7xl md:text-[10rem] text-white mb-8 leading-none drop-shadow-2xl font-bold tracking-tighter">
             Digrazia <br />
             <span className="italic font-light">Elegance</span>
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg font-medium">
+          <p className="text-xl md:text-2xl text-white/90 mb-16 max-w-2xl mx-auto leading-relaxed drop-shadow-lg font-medium">
             Artisanal furniture crafted with soul. Experience the perfect
             harmony of nature and design in every curve.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pb-12">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pb-20">
             <Link
               to="/shop"
               className="px-12 py-5 bg-white text-nude-500 rounded-full font-bold uppercase tracking-widest hover:bg-pastel-clay hover:text-white transition-all shadow-2xl hover:scale-105"

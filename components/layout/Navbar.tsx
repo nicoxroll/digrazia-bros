@@ -39,7 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, solid, on
 
           <Link 
             to="/" 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => window.lenis?.scrollTo(0)}
             className={`font-serif text-xl md:text-3xl font-bold tracking-tighter transition-colors duration-500 flex items-center gap-2 md:gap-3 ${
             isSolid ? 'text-nude-500' : 'text-white drop-shadow-md'
           }`}>
@@ -51,8 +51,8 @@ export const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, solid, on
         <div className={`hidden md:flex items-center gap-12 text-sm font-bold uppercase tracking-widest transition-colors duration-500 ${
           isSolid ? 'text-nude-400' : 'text-white/90 drop-shadow-sm'
         }`}>
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-pastel-clay transition-colors">Home</Link>
-          <Link to="/shop" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-pastel-clay transition-colors">Collections</Link>
+          <Link to="/" onClick={() => window.lenis?.scrollTo(0)} className="hover:text-pastel-clay transition-colors">Home</Link>
+          <Link to="/shop" onClick={() => window.lenis?.scrollTo(0)} className="hover:text-pastel-clay transition-colors">Collections</Link>
           <button onClick={onContactClick} className="hover:text-pastel-clay transition-colors uppercase tracking-widest font-bold">Contact</button>
         </div>
 
@@ -80,8 +80,8 @@ export const Navbar: React.FC<NavbarProps> = ({ cartCount, onOpenCart, solid, on
             </button>
           </div>
           <div className="flex flex-col gap-8 text-xl font-bold uppercase tracking-widest text-nude-500">
-            <Link to="/" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-pastel-clay transition-colors">Home</Link>
-            <Link to="/shop" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-pastel-clay transition-colors">Collections</Link>
+            <Link to="/" onClick={() => { setIsMobileMenuOpen(false); window.lenis?.scrollTo(0); }} className="hover:text-pastel-clay transition-colors">Home</Link>
+            <Link to="/shop" onClick={() => { setIsMobileMenuOpen(false); window.lenis?.scrollTo(0); }} className="hover:text-pastel-clay transition-colors">Collections</Link>
             <button onClick={() => { setIsMobileMenuOpen(false); onContactClick?.(); }} className="text-left hover:text-pastel-clay transition-colors uppercase tracking-widest font-bold">Contact</button>
           </div>
         </div>

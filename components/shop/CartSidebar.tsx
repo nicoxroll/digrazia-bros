@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartItem } from '../../types';
+import { useSmoothContainerScroll } from '../../hooks/useSmoothContainerScroll';
 
 interface CartSidebarProps {
   items: CartItem[];
@@ -12,7 +13,16 @@ interface CartSidebarProps {
 
 export const CartSidebar: React.FC<CartSidebarProps> = ({ items, isOpen, onClose, onUpdate }) => {
   const navigate = useNavigate();
+  const { initScroll } = useSmoothContainerScroll();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const total = items.reduce((acc, cur) => acc + (cur.price * cur.quantity), 0);
+
+  useEffect(() => {
+    if (isOpen && scrollContainerRef.current) {
+      initScroll(scrollContainerRef.current);
+    }
+  }, [isOpen, initScroll]);
 
   const handleCheckout = () => {
     onClose();
@@ -28,7 +38,12 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({ items, isOpen, onClose
             <h3 className="font-serif text-3xl text-nude-500 font-bold">Your Basket</h3>
             <button onClick={onClose} className="p-3 hover:bg-nude-50 rounded-full transition-colors text-nude-500"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
           </div>
-          <div className="flex-1 overflow-y-auto p-8 space-y-10">
+          <div
+            ref={scrollContainerRef}
+            className="flex-1 p-8 space-y-10"
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+          >
             {items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-nude-200"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>

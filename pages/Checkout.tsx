@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartItem } from '../types';
+import { useSmoothContainerScroll } from '../hooks/useSmoothContainerScroll';
 
 interface CheckoutProps {
   cart: CartItem[];
@@ -11,9 +12,18 @@ interface CheckoutProps {
 export const Checkout: React.FC<CheckoutProps> = ({ cart, onClear }) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const { initScroll } = useSmoothContainerScroll();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shipping = 150;
   const total = subtotal + shipping;
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      initScroll(scrollContainerRef.current);
+    }
+  }, [initScroll]);
 
   const handleOrder = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +81,12 @@ export const Checkout: React.FC<CheckoutProps> = ({ cart, onClear }) => {
             <div className="space-y-12">
                <h3 className="font-serif text-3xl text-nude-500 font-bold">Order Summary</h3>
                <div className="bg-white p-12 rounded-[3rem] shadow-sm border border-nude-100 space-y-8">
-                  <div className="space-y-6 max-h-[400px] overflow-y-auto no-scrollbar">
+                  <div
+                    ref={scrollContainerRef}
+                    className="space-y-6 max-h-[400px] no-scrollbar"
+                    onWheel={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                  >
                     {cart.map(item => (
                       <div key={item.id} className="flex gap-6 items-center">
                         <img src={item.image} className="w-20 h-20 rounded-2xl object-cover" />
