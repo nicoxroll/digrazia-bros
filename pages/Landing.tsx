@@ -2,8 +2,8 @@ import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ScrollingFashionMarquee } from "../components/ui/ScrollingFashionMarquee";
 import { SmoothReveal } from "../components/ui/SmoothReveal";
-import { useProducts } from "../hooks/useProducts";
 import { useParallax } from "../hooks/useParallax";
+import { useProducts } from "../hooks/useProducts";
 import { Product } from "../types";
 
 declare global {

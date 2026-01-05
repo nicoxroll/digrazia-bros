@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Product } from '../types';
-import { PRODUCTS as TEST_PRODUCTS } from '../constants';
-import { InventoryService } from '../services/supabase';
+import { useEffect, useState } from "react";
+import { PRODUCTS as TEST_PRODUCTS } from "../constants";
+import { InventoryService } from "../services/supabase";
+import { Product } from "../types";
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,7 +11,7 @@ export const useProducts = () => {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const useTestImages = localStorage.getItem('useTestImages') !== 'false';
+        const useTestImages = localStorage.getItem("useTestImages") !== "false";
 
         if (useTestImages) {
           setProducts(TEST_PRODUCTS);
@@ -20,8 +20,8 @@ export const useProducts = () => {
           setProducts(supabaseProducts);
         }
       } catch (err) {
-        console.error('Error loading products:', err);
-        setError('Failed to load products');
+        console.error("Error loading products:", err);
+        setError("Failed to load products");
         // Fallback to test products
         setProducts(TEST_PRODUCTS);
       } finally {
@@ -36,10 +36,10 @@ export const useProducts = () => {
       loadProducts();
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 

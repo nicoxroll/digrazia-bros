@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ProductGridSkeleton } from "../components/ui/ProductSkeletons";
-import { useProducts } from "../hooks/useProducts";
 import { useParallax } from "../hooks/useParallax";
+import { useProducts } from "../hooks/useProducts";
 import { Product } from "../types";
 
 const ExpandingGridRow: React.FC<{
