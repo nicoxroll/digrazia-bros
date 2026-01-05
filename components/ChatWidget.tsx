@@ -207,10 +207,14 @@ export const ChatWidget: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-      {(isOpen || isClosing) ? (
+      {isOpen || isClosing ? (
         <div
           ref={chatRef}
-          className={`w-[90vw] sm:w-96 h-[80vh] sm:h-[550px] max-h-[600px] flex flex-col bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-nude-200 duration-500 ease-out ${isClosing ? 'animate-out fade-out slide-out-to-bottom-8' : 'animate-in fade-in slide-in-from-bottom-8'}`}
+          className={`w-[90vw] sm:w-96 h-[80vh] sm:h-[550px] max-h-[600px] flex flex-col bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-nude-200 duration-500 ease-out ${
+            isClosing
+              ? "animate-out fade-out slide-out-to-bottom-8"
+              : "animate-in fade-in slide-in-from-bottom-8"
+          }`}
           onWheel={(e) => e.stopPropagation()}
           onTouchMove={(e) => e.stopPropagation()}
         >
@@ -394,7 +398,9 @@ export const ChatWidget: React.FC = () => {
       ) : (
         <button
           onClick={handleOpen}
-          className={`w-16 h-16 bg-nude-500 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group overflow-hidden ${isClosing ? 'invisible' : ''}`}
+          className={`w-16 h-16 bg-nude-500 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group overflow-hidden ${
+            isClosing ? "invisible" : ""
+          }`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
