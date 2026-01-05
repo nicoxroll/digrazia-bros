@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Product } from '../types';
-import { PRODUCTS } from '../constants';
+import { useProducts } from '../hooks/useProducts';
 import { GeminiService } from '../services/geminiService';
 import { useParallax } from '../hooks/useParallax';
 
@@ -85,7 +85,8 @@ const ExpandingImageRow: React.FC<{ images: string[], onImageClick: (idx: number
 export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({ onAddToCart }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const product = PRODUCTS.find(p => p.id === id);
+  const { products } = useProducts();
+  const product = products.find(p => p.id === id);
   
   const [roomImage, setRoomImage] = useState<string | null>(null);
   const [visualPrompt, setVisualPrompt] = useState('');

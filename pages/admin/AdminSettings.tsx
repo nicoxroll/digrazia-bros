@@ -1,9 +1,41 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export const AdminSettings: React.FC = () => {
   const [isAiEnabled, setIsAiEnabled] = useState(true);
+  const [aiChatEnabled, setAiChatEnabled] = useState(true);
+  const [aiSimulationEnabled, setAiSimulationEnabled] = useState(true);
+  const [useTestImages, setUseTestImages] = useState(true);
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+
+  // Load settings from localStorage
+  useEffect(() => {
+    const chatEnabled = localStorage.getItem('aiChatEnabled') !== 'false';
+    const simEnabled = localStorage.getItem('aiSimulationEnabled') !== 'false';
+    const testImages = localStorage.getItem('useTestImages') !== 'false';
+    const aiEnabled = localStorage.getItem('isAiEnabled') !== 'false';
+    setAiChatEnabled(chatEnabled);
+    setAiSimulationEnabled(simEnabled);
+    setUseTestImages(testImages);
+    setIsAiEnabled(aiEnabled);
+  }, []);
+
+  // Save settings to localStorage
+  useEffect(() => {
+    localStorage.setItem('aiChatEnabled', aiChatEnabled.toString());
+  }, [aiChatEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('aiSimulationEnabled', aiSimulationEnabled.toString());
+  }, [aiSimulationEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('useTestImages', useTestImages.toString());
+  }, [useTestImages]);
+
+  useEffect(() => {
+    localStorage.setItem('isAiEnabled', isAiEnabled.toString());
+  }, [isAiEnabled]);
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
@@ -51,7 +83,7 @@ export const AdminSettings: React.FC = () => {
                 <div className="w-10 h-10 bg-pastel-sage/30 rounded-xl flex items-center justify-center text-pastel-clay">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </div>
-                <h3 className="font-serif text-2xl font-bold text-nude-500">Concierge AI</h3>
+                <h3 className="font-serif text-2xl font-bold text-nude-500">AI Configuration</h3>
               </div>
               <button 
                 onClick={() => setIsAiEnabled(!isAiEnabled)}
@@ -61,6 +93,63 @@ export const AdminSettings: React.FC = () => {
               </button>
             </div>
             
+            <div className="space-y-6">
+              <div className="flex items-center justify-between py-4 border-b border-nude-50">
+                <div>
+                  <p className="font-bold text-sm text-nude-500">Chat Assistant</p>
+                  <p className="text-xs text-nude-400">Enable AI-powered customer chat support</p>
+                </div>
+                <button
+                  onClick={() => setAiChatEnabled(!aiChatEnabled)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    aiChatEnabled ? 'bg-nude-500' : 'bg-nude-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      aiChatEnabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              <div className="flex items-center justify-between py-4 border-b border-nude-50">
+                <div>
+                  <p className="font-bold text-sm text-nude-500">AI Simulation</p>
+                  <p className="text-xs text-nude-400">Enable AI-generated design visualizations</p>
+                </div>
+                <button
+                  onClick={() => setAiSimulationEnabled(!aiSimulationEnabled)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    aiSimulationEnabled ? 'bg-nude-500' : 'bg-nude-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      aiSimulationEnabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              <div className="flex items-center justify-between py-4">
+                <div>
+                  <p className="font-bold text-sm text-nude-500">Use Test Images</p>
+                  <p className="text-xs text-nude-400">Use placeholder images instead of Supabase collections</p>
+                </div>
+                <button
+                  onClick={() => setUseTestImages(!useTestImages)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    useTestImages ? 'bg-nude-500' : 'bg-nude-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      useTestImages ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-nude-300 ml-4">AI Model</label>

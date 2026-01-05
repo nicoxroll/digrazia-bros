@@ -80,7 +80,16 @@ export const ChatWidget: React.FC = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [aiEnabled, setAiEnabled] = useState(true);
+  const [aiSimulationEnabled, setAiSimulationEnabled] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const chatEnabled = localStorage.getItem("aiChatEnabled") !== "false";
+    const simEnabled = localStorage.getItem("aiSimulationEnabled") !== "false";
+    setAiEnabled(chatEnabled);
+    setAiSimulationEnabled(simEnabled);
+  }, []);
 
   useEffect(() => {
     if (isOpen && scrollRef.current) {
@@ -125,6 +134,19 @@ export const ChatWidget: React.FC = () => {
     setInput("");
     setIsLoading(true);
 
+    if (!aiEnabled) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "AI chat is currently disabled. Please contact us directly for assistance.",
+        },
+      ]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       // Check for image generation intent
       const isImageRequest =
@@ -132,7 +154,7 @@ export const ChatWidget: React.FC = () => {
           input
         );
 
-      if (isImageRequest) {
+      if (isImageRequest && aiSimulationEnabled) {
         const imageBase64 = await GeminiService.generateVisual(input, "1K");
         if (imageBase64) {
           const botMessage: Message = {
@@ -143,6 +165,15 @@ export const ChatWidget: React.FC = () => {
           setMessages((prev) => [...prev, botMessage]);
           return;
         }
+      } else if (isImageRequest && !aiSimulationEnabled) {
+        const botMessage: Message = {
+          role: "assistant",
+          content:
+            "AI image generation is currently disabled. Please contact us for custom design visualizations.",
+        };
+        setMessages((prev) => [...prev, botMessage]);
+        setIsLoading(false);
+        return;
       }
 
       let response = await GeminiService.quickChat(input);

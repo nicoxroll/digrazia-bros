@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { StatsCardSkeleton } from "../../components/ui/AdminSkeletons";
-import { PRODUCTS } from "../../constants";
+import { useProducts } from "../../hooks/useProducts";
 
 export const AdminDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const { products } = useProducts();
 
   const stats = [
     {
@@ -42,7 +43,7 @@ export const AdminDashboard: React.FC = () => {
   }, []);
 
   // Logic for Pie Chart (Category Distribution)
-  const categories = PRODUCTS.reduce((acc: any, p) => {
+  const categories = products.reduce((acc: any, p) => {
     acc[p.category] = (acc[p.category] || 0) + 1;
     return acc;
   }, {});
@@ -180,7 +181,7 @@ export const AdminDashboard: React.FC = () => {
                   Total Pieces
                 </span>
                 <span className="text-3xl font-serif font-bold text-nude-500">
-                  {PRODUCTS.length}
+                  {products.length}
                 </span>
               </div>
             </div>

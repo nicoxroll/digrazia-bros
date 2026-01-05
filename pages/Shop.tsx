@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ProductGridSkeleton } from "../components/ui/ProductSkeletons";
-import { PRODUCTS } from "../constants";
+import { useProducts } from "../hooks/useProducts";
 import { useParallax } from "../hooks/useParallax";
 import { Product } from "../types";
 
@@ -75,8 +75,8 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({
 }) => {
   const [filter, setFilter] = useState<string>("All");
   const [showFilters, setShowFilters] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const galleryRef = useRef<HTMLDivElement>(null);
+  const { products, loading } = useProducts();
   const categories = [
     "All",
     "Living Room",
@@ -86,20 +86,11 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({
     "Decor",
   ];
 
-  // Simular carga de productos
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500); // Simular 1.5 segundos de carga
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const filteredProducts = useMemo(() => {
     return filter === "All"
-      ? PRODUCTS
-      : PRODUCTS.filter((p) => p.category === filter);
-  }, [filter]);
+      ? products
+      : products.filter((p) => p.category === filter);
+  }, [products, filter]);
 
   const productChunks = useMemo(() => {
     const chunks = [];
@@ -197,7 +188,7 @@ export const Shop: React.FC<{ onAddToCart: (p: Product) => void }> = ({
         </div>
 
         <div className="flex flex-col gap-1 w-full bg-nude-50">
-          {isLoading ? (
+          {loading ? (
             // Mostrar skeletons mientras carga
             <>
               <ProductGridSkeleton />

@@ -139,7 +139,7 @@ export const AdminSales: React.FC = () => {
       </div>
 
       <div className="bg-white rounded-[3rem] shadow-sm border border-nude-100 overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-auto max-w-full max-h-[600px]">
           <table className="w-full text-left min-w-[900px]">
             <thead className="bg-nude-50 border-b border-nude-100">
               <tr>

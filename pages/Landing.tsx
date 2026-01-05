@@ -2,7 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ScrollingFashionMarquee } from "../components/ui/ScrollingFashionMarquee";
 import { SmoothReveal } from "../components/ui/SmoothReveal";
-import { PRODUCTS } from "../constants";
+import { useProducts } from "../hooks/useProducts";
 import { useParallax } from "../hooks/useParallax";
 import { Product } from "../types";
 
@@ -327,7 +327,8 @@ export const Landing: React.FC<{
   contactRef: React.RefObject<HTMLElement>;
 }> = ({ onAddToCart, contactRef }) => {
   const aboutRef = useRef<HTMLElement>(null);
-  const featured = PRODUCTS.slice(0, 4);
+  const { products } = useProducts();
+  const featured = products.slice(0, 4);
   const scrollY = useParallax();
 
   return (
