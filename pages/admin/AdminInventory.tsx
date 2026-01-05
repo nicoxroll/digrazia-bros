@@ -113,7 +113,7 @@ export const AdminInventory: React.FC = () => {
       try {
         const productData = {
           name,
-          category: category as any,
+          category,
           price,
           description,
           images: gallery,
@@ -168,7 +168,7 @@ export const AdminInventory: React.FC = () => {
             </label>
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => setCategory(e.target.value as Product['category'])}
               className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20"
             >
               <option>Living Room</option>

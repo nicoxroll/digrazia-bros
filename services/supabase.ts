@@ -34,10 +34,22 @@ export const InventoryService = {
   },
 
   async updateProduct(id: string, updates: Partial<Product>) {
+    // First get the current product to merge with updates
+    const { data: currentProduct, error: fetchError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    // Merge updates with current data
+    const updatedProduct = { ...currentProduct, ...updates };
+
+    // Use upsert instead of update to avoid CORS PATCH issues
     const { data, error } = await supabase
       .from('products')
-      .update(updates)
-      .eq('id', id)
+      .upsert(updatedProduct, { onConflict: 'id' })
       .select()
       .single();
 
