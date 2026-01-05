@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useConfig } from "../../context/ConfigContext";
 import { TableRowSkeleton } from "../../components/ui/AdminSkeletons";
 import { Modal } from "../../components/ui/Modal";
 import { InventoryService } from "../../services/supabase";
 import { Product } from "../../types";
 
 export const AdminInventory: React.FC = () => {
+  const { config } = useConfig();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -89,7 +91,23 @@ export const AdminInventory: React.FC = () => {
       setIsUploading(true);
       setLastUploadedUrl(null);
       try {
-        const url = await InventoryService.uploadImage(file);
+        let url: string;
+        
+        if (config.use_test_images) {
+          // Simulate upload for test mode
+          await new Promise(resolve => setTimeout(resolve, 1500));
+          // Return a random furniture image from Unsplash
+          const testImages = [
+            "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=2070&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=2070&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=2070&auto=format&fit=crop"
+          ];
+          url = testImages[Math.floor(Math.random() * testImages.length)];
+        } else {
+          url = await InventoryService.uploadImage(file);
+        }
+
         if (url) {
           handleAddImage(url);
           setLastUploadedUrl(url);

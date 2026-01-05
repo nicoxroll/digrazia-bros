@@ -24,3 +24,12 @@ export interface Message {
 
 // ImageSize options compliant with gemini-3-pro-image-preview requirements.
 export type ImageSize = '1K' | '2K' | '4K';
+
+export interface AppConfig {
+  id: number;
+  ai_enabled: boolean;
+  ai_chat_enabled: boolean;
+  ai_simulation_enabled: boolean;
+  use_test_images: boolean;
+  maintenance_mode: boolean;
+}

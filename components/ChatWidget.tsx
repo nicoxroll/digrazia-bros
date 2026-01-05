@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { useConfig } from "../context/ConfigContext";
 import { GeminiService } from "../services/geminiService";
 import { Message } from "../types";
 
@@ -69,6 +70,7 @@ const FullScreenImage: React.FC<{
 };
 
 export const ChatWidget: React.FC = () => {
+  const { config } = useConfig();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -80,16 +82,7 @@ export const ChatWidget: React.FC = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
-  const [aiEnabled, setAiEnabled] = useState(true);
-  const [aiSimulationEnabled, setAiSimulationEnabled] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const chatEnabled = localStorage.getItem("aiChatEnabled") !== "false";
-    const simEnabled = localStorage.getItem("aiSimulationEnabled") !== "false";
-    setAiEnabled(chatEnabled);
-    setAiSimulationEnabled(simEnabled);
-  }, []);
 
   useEffect(() => {
     if (isOpen && scrollRef.current) {
@@ -134,7 +127,7 @@ export const ChatWidget: React.FC = () => {
     setInput("");
     setIsLoading(true);
 
-    if (!aiEnabled) {
+    if (!config.ai_chat_enabled) {
       setMessages((prev) => [
         ...prev,
         {
@@ -154,7 +147,7 @@ export const ChatWidget: React.FC = () => {
           input
         );
 
-      if (isImageRequest && aiSimulationEnabled) {
+      if (isImageRequest && config.ai_simulation_enabled) {
         const imageBase64 = await GeminiService.generateVisual(input, "1K");
         if (imageBase64) {
           const botMessage: Message = {
@@ -165,7 +158,7 @@ export const ChatWidget: React.FC = () => {
           setMessages((prev) => [...prev, botMessage]);
           return;
         }
-      } else if (isImageRequest && !aiSimulationEnabled) {
+      } else if (isImageRequest && !config.ai_simulation_enabled) {
         const botMessage: Message = {
           role: "assistant",
           content:

@@ -26,7 +26,7 @@ export const Footer: React.FC<FooterProps> = ({ onContactClick }) => {
             <ul className="space-y-6 text-sm font-medium text-nude-300">
               <li>
                 <Link to="/" className="hover:text-white transition-colors">
-                  Home Studio
+                  Home
                 </Link>
               </li>
               <li>
@@ -35,8 +35,11 @@ export const Footer: React.FC<FooterProps> = ({ onContactClick }) => {
                 </Link>
               </li>
               <li>
-                <button className="hover:text-white transition-colors">
-                  The Legacy
+                <button
+                  onClick={onContactClick}
+                  className="hover:text-white transition-colors"
+                >
+                  Contact
                 </button>
               </li>
             </ul>
@@ -51,21 +54,8 @@ export const Footer: React.FC<FooterProps> = ({ onContactClick }) => {
                   to="/login"
                   className="hover:text-white transition-colors"
                 >
-                  Admin Portal
+                  Admin
                 </Link>
-              </li>
-              <li>
-                <button className="hover:text-white transition-colors">
-                  Care Guide
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={onContactClick}
-                  className="hover:text-white transition-colors"
-                >
-                  Studio Contact
-                </button>
               </li>
             </ul>
           </div>

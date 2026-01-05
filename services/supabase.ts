@@ -108,3 +108,38 @@ export const InventoryService = {
     return data.publicUrl;
   },
 };
+
+export const ConfigService = {
+  async getConfig() {
+    const { data, error } = await supabase
+      .from('config')
+      .select('*')
+      .eq('id', 1)
+      .single();
+    
+    if (error) {
+      console.warn('Error fetching config, using defaults:', error);
+      return {
+        id: 1,
+        ai_enabled: true,
+        ai_chat_enabled: true,
+        ai_simulation_enabled: true,
+        use_test_images: true,
+        maintenance_mode: false
+      };
+    }
+    return data;
+  },
+
+  async updateConfig(updates: Partial<any>) {
+    const { data, error } = await supabase
+      .from('config')
+      .update(updates)
+      .eq('id', 1)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+};

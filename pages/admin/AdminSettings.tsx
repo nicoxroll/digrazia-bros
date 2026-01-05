@@ -1,40 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useConfig } from "../../context/ConfigContext";
 
 export const AdminSettings: React.FC = () => {
-  const [isAiEnabled, setIsAiEnabled] = useState(true);
-  const [aiChatEnabled, setAiChatEnabled] = useState(true);
-  const [aiSimulationEnabled, setAiSimulationEnabled] = useState(true);
-  const [useTestImages, setUseTestImages] = useState(true);
-  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const { config, updateConfig, isLoading } = useConfig();
 
-  // Load settings from localStorage
-  useEffect(() => {
-    const chatEnabled = localStorage.getItem("aiChatEnabled") !== "false";
-    const simEnabled = localStorage.getItem("aiSimulationEnabled") !== "false";
-    const testImages = localStorage.getItem("useTestImages") !== "false";
-    const aiEnabled = localStorage.getItem("isAiEnabled") !== "false";
-    setAiChatEnabled(chatEnabled);
-    setAiSimulationEnabled(simEnabled);
-    setUseTestImages(testImages);
-    setIsAiEnabled(aiEnabled);
-  }, []);
+  const handleToggle = (key: keyof typeof config) => {
+    updateConfig({ [key]: !config[key] });
+  };
 
-  // Save settings to localStorage
-  useEffect(() => {
-    localStorage.setItem("aiChatEnabled", aiChatEnabled.toString());
-  }, [aiChatEnabled]);
-
-  useEffect(() => {
-    localStorage.setItem("aiSimulationEnabled", aiSimulationEnabled.toString());
-  }, [aiSimulationEnabled]);
-
-  useEffect(() => {
-    localStorage.setItem("useTestImages", useTestImages.toString());
-  }, [useTestImages]);
-
-  useEffect(() => {
-    localStorage.setItem("isAiEnabled", isAiEnabled.toString());
-  }, [isAiEnabled]);
+  if (isLoading) {
+    return <div className="p-12 text-center text-nude-400">Loading configuration...</div>;
+  }
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
@@ -47,9 +23,10 @@ export const AdminSettings: React.FC = () => {
             Refine your brand's digital presence.
           </p>
         </div>
-        <button className="px-10 py-4 bg-nude-500 text-white rounded-full text-xs font-bold uppercase tracking-widest shadow-xl hover:bg-black transition-all hover:scale-105 active:scale-95">
-          Publish Changes
-        </button>
+        {/* Changes are saved automatically via context */}
+        <div className="text-xs text-nude-400 font-bold uppercase tracking-widest">
+          Changes saved automatically
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -98,6 +75,7 @@ export const AdminSettings: React.FC = () => {
                   className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20"
                 />
               </div>
+
             </div>
 
             <div className="space-y-2">
@@ -131,14 +109,14 @@ export const AdminSettings: React.FC = () => {
                 </h3>
               </div>
               <button
-                onClick={() => setIsAiEnabled(!isAiEnabled)}
+                onClick={() => handleToggle('ai_enabled')}
                 className={`w-14 h-8 rounded-full transition-all relative ${
-                  isAiEnabled ? "bg-emerald-400" : "bg-nude-200"
+                  config.ai_enabled ? "bg-emerald-400" : "bg-nude-200"
                 }`}
               >
                 <div
                   className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-all ${
-                    isAiEnabled ? "left-7" : "left-1"
+                    config.ai_enabled ? "left-7" : "left-1"
                   }`}
                 />
               </button>
@@ -155,14 +133,14 @@ export const AdminSettings: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => setAiChatEnabled(!aiChatEnabled)}
+                  onClick={() => handleToggle('ai_chat_enabled')}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    aiChatEnabled ? "bg-nude-500" : "bg-nude-200"
+                    config.ai_chat_enabled ? "bg-nude-500" : "bg-nude-200"
                   }`}
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      aiChatEnabled ? "translate-x-6" : "translate-x-1"
+                      config.ai_chat_enabled ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -177,14 +155,14 @@ export const AdminSettings: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => setAiSimulationEnabled(!aiSimulationEnabled)}
+                  onClick={() => handleToggle('ai_simulation_enabled')}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    aiSimulationEnabled ? "bg-nude-500" : "bg-nude-200"
+                    config.ai_simulation_enabled ? "bg-nude-500" : "bg-nude-200"
                   }`}
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      aiSimulationEnabled ? "translate-x-6" : "translate-x-1"
+                      config.ai_simulation_enabled ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -199,14 +177,14 @@ export const AdminSettings: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => setUseTestImages(!useTestImages)}
+                  onClick={() => handleToggle('use_test_images')}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    useTestImages ? "bg-nude-500" : "bg-nude-200"
+                    config.use_test_images ? "bg-nude-500" : "bg-nude-200"
                   }`}
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      useTestImages ? "translate-x-6" : "translate-x-1"
+                      config.use_test_images ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -276,14 +254,14 @@ export const AdminSettings: React.FC = () => {
                 Maintenance Mode
               </span>
               <button
-                onClick={() => setIsMaintenanceMode(!isMaintenanceMode)}
+                onClick={() => handleToggle('maintenance_mode')}
                 className={`w-12 h-6 rounded-full transition-all relative ${
-                  isMaintenanceMode ? "bg-red-400" : "bg-nude-100"
+                  config.maintenance_mode ? "bg-red-400" : "bg-nude-100"
                 }`}
               >
                 <div
                   className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all ${
-                    isMaintenanceMode ? "left-6.5" : "left-0.5"
+                    config.maintenance_mode ? "left-6.5" : "left-0.5"
                   }`}
                 />
               </button>
