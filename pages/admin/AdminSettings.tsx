@@ -9,7 +9,11 @@ export const AdminSettings: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="p-12 text-center text-nude-400">Loading configuration...</div>;
+    return (
+      <div className="p-12 text-center text-nude-400">
+        Loading configuration...
+      </div>
+    );
   }
 
   return (
@@ -75,7 +79,6 @@ export const AdminSettings: React.FC = () => {
                   className="w-full bg-nude-50 border border-nude-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-pastel-clay/20"
                 />
               </div>
-
             </div>
 
             <div className="space-y-2">
@@ -109,7 +112,7 @@ export const AdminSettings: React.FC = () => {
                 </h3>
               </div>
               <button
-                onClick={() => handleToggle('ai_enabled')}
+                onClick={() => handleToggle("ai_enabled")}
                 className={`w-14 h-8 rounded-full transition-all relative ${
                   config.ai_enabled ? "bg-emerald-400" : "bg-nude-200"
                 }`}
@@ -133,7 +136,7 @@ export const AdminSettings: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => handleToggle('ai_chat_enabled')}
+                  onClick={() => handleToggle("ai_chat_enabled")}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     config.ai_chat_enabled ? "bg-nude-500" : "bg-nude-200"
                   }`}
@@ -155,14 +158,16 @@ export const AdminSettings: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => handleToggle('ai_simulation_enabled')}
+                  onClick={() => handleToggle("ai_simulation_enabled")}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     config.ai_simulation_enabled ? "bg-nude-500" : "bg-nude-200"
                   }`}
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      config.ai_simulation_enabled ? "translate-x-6" : "translate-x-1"
+                      config.ai_simulation_enabled
+                        ? "translate-x-6"
+                        : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -177,7 +182,7 @@ export const AdminSettings: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => handleToggle('use_test_images')}
+                  onClick={() => handleToggle("use_test_images")}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     config.use_test_images ? "bg-nude-500" : "bg-nude-200"
                   }`}
@@ -254,7 +259,7 @@ export const AdminSettings: React.FC = () => {
                 Maintenance Mode
               </span>
               <button
-                onClick={() => handleToggle('maintenance_mode')}
+                onClick={() => handleToggle("maintenance_mode")}
                 className={`w-12 h-6 rounded-full transition-all relative ${
                   config.maintenance_mode ? "bg-red-400" : "bg-nude-100"
                 }`}

@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ConfigService } from '../services/supabase';
-import { AppConfig } from '../types';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { ConfigService } from "../services/supabase";
+import { AppConfig } from "../types";
 
 interface ConfigContextType {
   config: AppConfig;
@@ -14,16 +14,18 @@ const defaultConfig: AppConfig = {
   ai_chat_enabled: true,
   ai_simulation_enabled: true,
   use_test_images: true,
-  maintenance_mode: false
+  maintenance_mode: false,
 };
 
 const ConfigContext = createContext<ConfigContextType>({
   config: defaultConfig,
   updateConfig: async () => {},
-  isLoading: true
+  isLoading: true,
 });
 
-export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [config, setConfig] = useState<AppConfig>(defaultConfig);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +38,7 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const data = await ConfigService.getConfig();
       if (data) setConfig(data);
     } catch (error) {
-      console.error('Failed to load config:', error);
+      console.error("Failed to load config:", error);
     } finally {
       setIsLoading(false);
     }
@@ -45,10 +47,10 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const updateConfig = async (updates: Partial<AppConfig>) => {
     try {
       // Optimistic update
-      setConfig(prev => ({ ...prev, ...updates }));
+      setConfig((prev) => ({ ...prev, ...updates }));
       await ConfigService.updateConfig(updates);
     } catch (error) {
-      console.error('Failed to update config:', error);
+      console.error("Failed to update config:", error);
       // Revert on error
       loadConfig();
     }
