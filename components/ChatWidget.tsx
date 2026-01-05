@@ -72,6 +72,7 @@ const FullScreenImage: React.FC<{
 export const ChatWidget: React.FC = () => {
   const { config } = useConfig();
   const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -83,6 +84,19 @@ export const ChatWidget: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsClosing(false);
+    }, 500); // Coincide con duration-500
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
 
   useEffect(() => {
     if (isOpen && scrollRef.current) {
@@ -98,26 +112,24 @@ export const ChatWidget: React.FC = () => {
     }
   }, [isOpen, messages, isLoading]);
 
-  // Controlar Lenis cuando se abre/cierra el chat
+  // Click outside to close
   useEffect(() => {
-    if (isOpen) {
-      // Pausar Lenis cuando se abre el chat
-      if (window.lenis) {
-        window.lenis.stop();
-      }
-    } else {
-      // Reanudar Lenis cuando se cierra el chat
-      if (window.lenis) {
-        window.lenis.start();
-      }
-    }
-    return () => {
-      // Asegurar que Lenis se reanude si el componente se desmonta
-      if (window.lenis) {
-        window.lenis.start();
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        !isClosing &&
+        chatRef.current &&
+        !chatRef.current.contains(event.target as Node)
+      ) {
+        handleClose();
       }
     };
-  }, [isOpen]);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, isClosing]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -195,20 +207,31 @@ export const ChatWidget: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-      {isOpen ? (
+      {(isOpen || isClosing) ? (
         <div
-          className="w-[90vw] sm:w-96 h-[80vh] sm:h-[550px] max-h-[600px] flex flex-col bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-nude-200 animate-in slide-in-from-bottom-5 duration-300"
+          ref={chatRef}
+          className={`w-[90vw] sm:w-96 h-[80vh] sm:h-[550px] max-h-[600px] flex flex-col bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-nude-200 duration-500 ease-out ${isClosing ? 'animate-out fade-out slide-out-to-bottom-8' : 'animate-in fade-in slide-in-from-bottom-8'}`}
           onWheel={(e) => e.stopPropagation()}
           onTouchMove={(e) => e.stopPropagation()}
         >
           <div className="p-4 sm:p-6 bg-nude-100 flex justify-between items-center border-b border-nude-200">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-nude-200">
-                <img
-                  src="/icon-cream.svg"
-                  alt="Concierge"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#C2A68C"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   className="w-5 h-5 sm:w-6 sm:h-6"
-                />
+                >
+                  <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" />
+                  <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z" />
+                  <path d="M5 18v2" />
+                  <path d="M19 18v2" />
+                </svg>
               </div>
               <div>
                 <h3 className="font-serif font-bold text-nude-500 text-base sm:text-lg">
@@ -220,7 +243,7 @@ export const ChatWidget: React.FC = () => {
               </div>
             </div>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={handleClose}
               className="p-2 hover:bg-nude-200 rounded-full transition-colors text-nude-400"
             >
               <svg
@@ -370,14 +393,24 @@ export const ChatWidget: React.FC = () => {
         </div>
       ) : (
         <button
-          onClick={() => setIsOpen(true)}
-          className="w-16 h-16 bg-nude-500 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group overflow-hidden"
+          onClick={handleOpen}
+          className={`w-16 h-16 bg-nude-500 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group overflow-hidden ${isClosing ? 'invisible' : ''}`}
         >
-          <img
-            src="/icon-cream.svg"
-            alt="Chat"
-            className="w-8 h-8 brightness-0 invert"
-          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="w-8 h-8"
+          >
+            <path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" />
+            <path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z" />
+            <path d="M5 18v2" />
+            <path d="M19 18v2" />
+          </svg>
         </button>
       )}
 
