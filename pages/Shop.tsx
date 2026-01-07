@@ -9,9 +9,11 @@ const ExpandingGridRow: React.FC<{
   products: Product[];
   onAddToCart: (p: Product) => void;
 }> = ({ products, onAddToCart }) => {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
   return (
-    <div className="flex flex-col lg:flex-row w-full h-[70vh] lg:h-[80vh] overflow-hidden">
-      {products.map((p) => (
+    <div className="flex flex-col lg:flex-row w-full h-[70vh] lg:h-[80vh] overflow-hidden" onTouchStart={() => setExpandedIndex(null)}>
+      {products.map((p, i) => (
         <Link
           to={`/product/${p.id}`}
           key={p.id}
@@ -19,7 +21,13 @@ const ExpandingGridRow: React.FC<{
             window.scrollTo(0, 0);
             window.lenis?.scrollTo(0, { immediate: true });
           }}
-          className="group relative flex-[1] hover:flex-[3] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden border-r last:border-0 border-white/10"
+          onMouseEnter={() => setExpandedIndex(i)}
+          onMouseLeave={() => setExpandedIndex(null)}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            setExpandedIndex(i);
+          }}
+          className={`group relative ${expandedIndex === i ? 'flex-[3]' : 'flex-[1]'} hover:flex-[3] transition-all duration-500 ease-in-out overflow-hidden border-r last:border-0 border-white/10`}
         >
           <img
             src={p.image}

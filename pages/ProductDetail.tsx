@@ -108,13 +108,21 @@ const ExpandingImageRow: React.FC<{
   images: string[];
   onImageClick: (idx: number) => void;
 }> = ({ images, onImageClick }) => {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
   return (
-    <div className="flex flex-col lg:flex-row w-full h-[70vh] lg:h-[80vh] overflow-hidden rounded-[4rem] shadow-2xl">
+    <div className="flex flex-col lg:flex-row w-full h-[70vh] lg:h-[80vh] overflow-hidden rounded-[4rem] shadow-2xl" onTouchStart={() => setExpandedIndex(null)}>
       {images.map((img, i) => (
         <div
           key={i}
           onClick={() => onImageClick(i)}
-          className="group relative flex-[1] hover:flex-[3] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden cursor-zoom-in border-r last:border-0 border-white/10"
+          onMouseEnter={() => setExpandedIndex(i)}
+          onMouseLeave={() => setExpandedIndex(null)}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            setExpandedIndex(i);
+          }}
+          className={`group relative ${expandedIndex === i ? 'flex-[3]' : 'flex-[1]'} hover:flex-[3] transition-all duration-500 ease-in-out overflow-hidden cursor-zoom-in border-r last:border-0 border-white/10`}
         >
           <img
             src={img}
@@ -143,6 +151,14 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
   const [error, setError] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const scrollY = useParallax();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -219,7 +235,7 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
             src={product.image}
             className="w-full h-full object-cover"
             alt={product.name}
-            style={{ transform: `translateY(${scrollY * 0.5}px) scale(1.1)` }}
+            style={isMobile ? {} : { transform: `translateY(${scrollY * 0.5}px) scale(1.1)` }}
           />
           <div className="absolute inset-0 bg-black/15 pointer-events-none" />
         </div>
