@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useConfig } from "../context/ConfigContext";
 import { useParallax } from "../hooks/useParallax";
 import { useProducts } from "../hooks/useProducts";
 import { GeminiService } from "../services/geminiService";
@@ -139,6 +140,7 @@ const ExpandingImageRow: React.FC<{
 export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
   onAddToCart,
 }) => {
+  const { config } = useConfig();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { products } = useProducts();
@@ -296,7 +298,8 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
           onImageClick={(idx) => setLightboxIndex(idx)}
         />
 
-        <section className="bg-nude-50 rounded-[5rem] p-12 lg:p-24 overflow-hidden relative mt-32">
+        {config.ai_simulation_enabled && (
+          <section className="bg-nude-50 rounded-[5rem] p-12 lg:p-24 overflow-hidden relative mt-32">
           <div className="max-w-5xl mx-auto text-center relative z-10">
             <h2 className="font-serif text-6xl text-nude-500 mb-12 font-bold tracking-tight">
               AI Scene Visualization
@@ -416,6 +419,7 @@ export const ProductDetail: React.FC<{ onAddToCart: (p: Product) => void }> = ({
             </div>
           </div>
         </section>
+        )}
       </section>
     </div>
   );

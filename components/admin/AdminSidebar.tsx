@@ -5,9 +5,11 @@ import { Link, useLocation } from 'react-router-dom';
 interface AdminSidebarProps {
   isCollapsed: boolean;
   onToggle: () => void;
+  isMobileOpen: boolean;
+  onMobileClose: () => void;
 }
 
-export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggle }) => {
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggle, isMobileOpen, onMobileClose }) => {
   const location = useLocation();
   const menuItems = [
     { label: 'Overview', path: '/admin/dashboard', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> },
@@ -17,44 +19,60 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggl
   ];
 
   return (
-    <aside className={`${isCollapsed ? 'w-24' : 'w-80'} h-screen bg-white border-r border-nude-100 p-6 flex flex-col fixed left-0 top-0 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] z-50`}>
-      <div className={`flex items-center mb-16 ${isCollapsed ? 'justify-center' : 'justify-between px-2'}`}>
-        {!isCollapsed && (
-          <Link to="/" className="font-serif text-2xl font-bold tracking-tighter text-nude-500 whitespace-nowrap overflow-hidden">
-            DIGRAZIA <span className="font-light">Bros.</span>
-          </Link>
-        )}
-        <button onClick={onToggle} className="p-2 hover:bg-nude-50 rounded-xl text-nude-300 transition-colors flex items-center justify-center">
-          <svg className={`transition-transform duration-500 ${isCollapsed ? 'rotate-180' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-      </div>
+    <>
+      {/* Mobile Overlay */}
+      <div 
+        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 lg:hidden ${isMobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={onMobileClose}
+      />
       
-      <nav className="flex-1 space-y-4">
-        {menuItems.map(item => (
-          <Link 
-            key={item.label} 
-            to={item.path} 
-            title={isCollapsed ? item.label : ''}
-            className={`flex items-center rounded-2xl text-sm font-bold uppercase tracking-widest transition-all ${
-              isCollapsed ? 'w-12 h-12 justify-center mx-auto px-0' : 'px-6 py-4'
-            } ${
-              location.pathname === item.path ? 'bg-nude-500 text-white shadow-xl' : 'text-nude-300 hover:bg-nude-50 hover:text-nude-500'
-            }`}
-          >
-            <div className="shrink-0 flex items-center justify-center">{item.icon}</div>
-            {!isCollapsed && <span className="ml-4 whitespace-nowrap overflow-hidden">{item.label}</span>}
-          </Link>
-        ))}
-      </nav>
+      <aside className={`
+        fixed left-0 top-0 h-screen bg-white border-r border-nude-100 p-6 flex flex-col z-50 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
+        ${isCollapsed ? 'lg:w-24' : 'lg:w-80'}
+        ${isMobileOpen ? 'translate-x-0 w-[85vw]' : '-translate-x-full lg:translate-x-0 w-[85vw] lg:w-auto'}
+      `}>
+        <div className={`flex items-center mb-16 ${isCollapsed ? 'justify-center' : 'justify-between px-2'}`}>
+          {(!isCollapsed || isMobileOpen) && (
+            <Link to="/" className="font-serif text-2xl font-bold tracking-tighter text-nude-500 whitespace-nowrap overflow-hidden">
+              DIGRAZIA <span className="font-light">Bros.</span>
+            </Link>
+          )}
+          <button onClick={onToggle} className="hidden lg:flex p-2 hover:bg-nude-50 rounded-xl text-nude-300 transition-colors items-center justify-center">
+            <svg className={`transition-transform duration-500 ${isCollapsed ? 'rotate-180' : ''}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button onClick={onMobileClose} className="lg:hidden p-2 hover:bg-nude-50 rounded-xl text-nude-300 transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+      
+        <nav className="flex-1 space-y-4">
+          {menuItems.map(item => (
+            <Link 
+              key={item.label} 
+              to={item.path} 
+              onClick={() => onMobileClose()}
+              title={isCollapsed && !isMobileOpen ? item.label : ''}
+              className={`flex items-center rounded-2xl text-sm font-bold uppercase tracking-widest transition-all ${
+                isCollapsed && !isMobileOpen ? 'w-12 h-12 justify-center mx-auto px-0' : 'px-6 py-4'
+              } ${
+                location.pathname === item.path ? 'bg-nude-500 text-white shadow-xl' : 'text-nude-300 hover:bg-nude-50 hover:text-nude-500'
+              }`}
+            >
+              <div className="shrink-0 flex items-center justify-center">{item.icon}</div>
+              {(!isCollapsed || isMobileOpen) && <span className="ml-4 whitespace-nowrap overflow-hidden">{item.label}</span>}
+            </Link>
+          ))}
+        </nav>
 
-      <div className="pt-8 border-t border-nude-50">
-        <Link to="/login" className={`flex items-center rounded-2xl text-sm font-bold uppercase tracking-widest text-red-300 hover:bg-red-50 hover:text-red-500 transition-all ${isCollapsed ? 'w-12 h-12 justify-center mx-auto px-0' : 'px-6 py-4'}`}>
-          <div className="flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-          </div>
-          {!isCollapsed && <span className="ml-4">Logout</span>}
-        </Link>
-      </div>
-    </aside>
+        <div className="pt-8 border-t border-nude-50">
+          <Link to="/login" className={`flex items-center rounded-2xl text-sm font-bold uppercase tracking-widest text-red-300 hover:bg-red-50 hover:text-red-500 transition-all ${isCollapsed && !isMobileOpen ? 'w-12 h-12 justify-center mx-auto px-0' : 'px-6 py-4'}`}>
+            <div className="flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            </div>
+            {(!isCollapsed || isMobileOpen) && <span className="ml-4">Logout</span>}
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 };

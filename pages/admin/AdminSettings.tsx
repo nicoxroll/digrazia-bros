@@ -20,7 +20,7 @@ export const AdminSettings: React.FC = () => {
     <div className="space-y-12 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h2 className="font-serif text-5xl text-nude-500 font-bold tracking-tight">
+          <h2 className="font-serif text-3xl lg:text-5xl text-nude-500 font-bold tracking-tight">
             Studio Configuration
           </h2>
           <p className="text-nude-300 font-medium tracking-widest uppercase text-[10px] mt-2">
@@ -36,7 +36,7 @@ export const AdminSettings: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Left Column: General & Branding */}
         <div className="lg:col-span-2 space-y-12">
-          <section className="bg-white p-12 rounded-[3rem] border border-nude-100 shadow-sm space-y-8">
+          <section className="bg-white p-6 lg:p-12 rounded-3xl lg:rounded-[3rem] border border-nude-100 shadow-sm space-y-8">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-nude-50 rounded-xl flex items-center justify-center text-nude-400">
                 <svg
@@ -92,7 +92,7 @@ export const AdminSettings: React.FC = () => {
             </div>
           </section>
 
-          <section className="bg-white p-12 rounded-[3rem] border border-nude-100 shadow-sm space-y-8">
+          <section className="bg-white p-6 lg:p-12 rounded-3xl lg:rounded-[3rem] border border-nude-100 shadow-sm space-y-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-pastel-sage/30 rounded-xl flex items-center justify-center text-pastel-clay">

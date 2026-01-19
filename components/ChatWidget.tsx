@@ -205,6 +205,8 @@ export const ChatWidget: React.FC = () => {
     }
   };
 
+  if (!config.ai_chat_enabled) return null;
+
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
       {isOpen || isClosing ? (

@@ -91,7 +91,7 @@ export const AdminSales: React.FC = () => {
     <div className="space-y-12 animate-in fade-in duration-700">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
         <div>
-          <h2 className="font-serif text-5xl text-nude-500 font-bold tracking-tight">
+          <h2 className="font-serif text-3xl lg:text-5xl text-nude-500 font-bold tracking-tight">
             Sales Ledger
           </h2>
           <p className="text-nude-300 font-medium tracking-widest uppercase text-[10px] mt-2">
@@ -138,27 +138,27 @@ export const AdminSales: React.FC = () => {
         </select>
       </div>
 
-      <div className="bg-white rounded-[3rem] shadow-sm border border-nude-100 overflow-hidden">
-        <div className="overflow-auto max-w-full max-h-[600px]">
+      <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-sm border border-nude-100 overflow-hidden">
+        <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[900px]">
             <thead className="bg-nude-50 border-b border-nude-100">
               <tr>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Order ID
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Customer
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Piece
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Revenue
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Status
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300 text-right">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300 text-right">
                   Ledger
                 </th>
               </tr>
@@ -175,25 +175,25 @@ export const AdminSales: React.FC = () => {
                     key={sale.id}
                     className="group hover:bg-nude-50/30 transition-colors"
                   >
-                    <td className="px-10 py-8 font-mono text-[10px] font-bold text-nude-200">
+                    <td className="px-6 lg:px-10 py-8 font-mono text-[10px] font-bold text-nude-200">
                       #{sale.id}
                     </td>
-                    <td className="px-10 py-8">
+                    <td className="px-6 lg:px-10 py-8">
                       <span className="font-bold text-nude-500">
                         {sale.customer}
                       </span>
                     </td>
-                    <td className="px-10 py-8">
+                    <td className="px-6 lg:px-10 py-8">
                       <span className="text-xs text-nude-300 font-medium">
                         {sale.product}
                       </span>
                     </td>
-                    <td className="px-10 py-8">
+                    <td className="px-6 lg:px-10 py-8">
                       <span className="font-serif font-bold text-nude-500">
                         ${sale.price.toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-10 py-8">
+                    <td className="px-6 lg:px-10 py-8">
                       <span
                         className={`inline-block px-4 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest border ${
                           sale.status === "Fulfilled"

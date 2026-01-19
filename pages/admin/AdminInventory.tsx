@@ -521,7 +521,7 @@ export const AdminInventory: React.FC = () => {
     <div className="space-y-12 animate-in fade-in duration-700">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
         <div>
-          <h2 className="font-serif text-5xl text-nude-500 font-bold tracking-tight">
+          <h2 className="font-serif text-3xl lg:text-5xl text-nude-500 font-bold tracking-tight">
             Active Inventory
           </h2>
           <p className="text-nude-300 font-medium tracking-widest uppercase text-[10px] mt-2">
@@ -572,24 +572,24 @@ export const AdminInventory: React.FC = () => {
         </select>
       </div>
 
-      <div className="bg-white rounded-[3rem] shadow-sm border border-nude-100 overflow-hidden">
-        <div className="overflow-auto max-w-full max-h-[600px]">
+      <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-sm border border-nude-100 overflow-hidden">
+        <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[800px]">
             <thead className="bg-nude-50 border-b border-nude-100">
               <tr>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Piece
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Category
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Current Stock
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
                   Price
                 </th>
-                <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300 text-right">
+                <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300 text-right">
                   Actions
                 </th>
               </tr>
@@ -610,7 +610,7 @@ export const AdminInventory: React.FC = () => {
                     key={p.id}
                     className="group hover:bg-nude-50/30 transition-colors"
                   >
-                    <td className="px-10 py-8">
+                    <td className="px-6 lg:px-10 py-8">
                       <div className="flex items-center gap-6">
                         <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm border border-nude-100 relative group-hover:scale-110 transition-transform duration-500">
                           <img
@@ -623,12 +623,12 @@ export const AdminInventory: React.FC = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-10 py-8">
+                    <td className="px-6 lg:px-10 py-8">
                       <span className="text-xs uppercase tracking-widest text-nude-300 font-bold">
                         {p.category}
                       </span>
                     </td>
-                    <td className="px-10 py-8">
+                    <td className="px-6 lg:px-10 py-8">
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-2.5 h-2.5 rounded-full ${
@@ -653,13 +653,13 @@ export const AdminInventory: React.FC = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-10 py-8">
+                    <td className="px-6 lg:px-10 py-8">
                       <span className="font-serif font-bold text-nude-500 text-lg">
                         ${p.price.toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-10 py-8 text-right">
-                      <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <td className="px-6 lg:px-10 py-8 text-right">
+                      <div className="flex justify-end gap-3 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => setEditingProduct(p)}
                           className="p-3 bg-white border border-nude-100 rounded-full text-nude-300 hover:text-nude-500 hover:shadow-md transition-all active:scale-95"
@@ -700,7 +700,7 @@ export const AdminInventory: React.FC = () => {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-10 py-20 text-center text-nude-300 italic"
+                    className="px-6 lg:px-10 py-20 text-center text-nude-300 italic"
                   >
                     No pieces found matching your criteria.
                   </td>

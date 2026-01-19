@@ -1,12 +1,6 @@
 import Lenis from "lenis";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  MemoryRouter,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 import { ChatWidget } from "./components/ChatWidget";
 import { AdminSidebar } from "./components/admin/AdminSidebar";
@@ -39,6 +33,7 @@ const AppContent: React.FC = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [adminUser, setAdminUser] = useState<string | null>(null);
   const [isAdminSidebarCollapsed, setIsAdminSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -110,10 +105,25 @@ const AppContent: React.FC = () => {
       <ScrollToTop />
 
       {isAdminView && adminUser && (
-        <AdminSidebar
-          isCollapsed={isAdminSidebarCollapsed}
-          onToggle={() => setIsAdminSidebarCollapsed(!isAdminSidebarCollapsed)}
-        />
+        <>
+          <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-nude-100 p-4 flex items-center justify-between">
+            <Link to="/" className="font-serif text-xl font-bold tracking-tighter text-nude-500">
+              DIGRAZIA <span className="font-light">Bros.</span>
+            </Link>
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 bg-nude-50 rounded-xl text-nude-500"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+          </div>
+          <AdminSidebar
+            isCollapsed={isAdminSidebarCollapsed}
+            onToggle={() => setIsAdminSidebarCollapsed(!isAdminSidebarCollapsed)}
+            isMobileOpen={isMobileMenuOpen}
+            onMobileClose={() => setIsMobileMenuOpen(false)}
+          />
+        </>
       )}
 
       <div className="flex-1 flex flex-col">
@@ -133,9 +143,7 @@ const AppContent: React.FC = () => {
         <main
           className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
             isAdminView && adminUser
-              ? isAdminSidebarCollapsed
-                ? "p-16 ml-24"
-                : "p-16 ml-80"
+              ? `pt-24 lg:pt-16 p-4 lg:p-16 ${isAdminSidebarCollapsed ? "lg:ml-24" : "lg:ml-80"}`
               : ""
           }`}
         >
