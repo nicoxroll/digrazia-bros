@@ -24,10 +24,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const isSolid = solid || isScrolled;
+  
+  // Calculate final Z-index to ensure menu stays on top
+  const zIndex = isMobileMenuOpen ? "z-[60]" : "z-40";
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 h-20 ${
+      className={`fixed top-0 left-0 right-0 ${zIndex} transition-all duration-500 h-20 ${
         isSolid
           ? "bg-white/95 backdrop-blur-md border-b border-nude-100 shadow-sm py-4"
           : "bg-transparent py-6"
@@ -153,7 +156,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-white z-[60] transition-transform duration-300 md:hidden flex flex-col ${
+        className={`fixed inset-0 bg-white z-[70] transition-transform duration-300 md:hidden flex flex-col ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
