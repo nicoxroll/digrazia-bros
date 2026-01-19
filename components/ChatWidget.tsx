@@ -181,25 +181,42 @@ export const ChatWidget: React.FC = () => {
         return;
       }
 
-      let response = await GeminiService.quickChat(input);
+      // Use the new chat method with history support
+      const response = await GeminiService.chat(
+        [...messages, userMessage],
+        config.use_test_images
+      );
 
-      // Fallback if API key is not present
-      if (response === null) {
-        response =
-          "Por favor, contáctanos al siguiente número: **+54 (221) 456-7890** para una atención personalizada.";
+      // Fallback if API key is not present or other error
+      if (!response || !response.content) {
+        throw new Error("Empty response from AI");
       }
 
-      const botMessage: Message = {
-        role: "assistant",
-        content: response,
-      };
-      setMessages((prev) => [...prev, botMessage]);
+      setMessages((prev) => [...prev, {
+        role: "assistant", 
+        content: response.content || "I apologize, but I received an empty response. How else can I help you?"
+      }]);
     } catch (error) {
-      console.error(error);
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "An error occurred. Please try again." },
-      ]);
+      console.error("Chat error:", error);
+      
+      // Check if it's the specific API key missing error
+      if ((error as any).message === "API_KEY_MISSING") {
+         setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "The AI service is not properly configured (API Key missing). Please contact the administrator.",
+          },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Por favor, contáctanos al siguiente número: **+54 (221) 456-7890** para una atención personalizada.",
+          },
+        ]);
+      }
     } finally {
       setIsLoading(false);
     }

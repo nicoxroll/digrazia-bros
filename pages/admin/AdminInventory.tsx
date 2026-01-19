@@ -572,10 +572,10 @@ export const AdminInventory: React.FC = () => {
         </select>
       </div>
 
-      <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-sm border border-nude-100 overflow-hidden">
+      <div className="bg-white rounded-[2rem] lg:rounded-[3rem] shadow-sm border border-nude-100 overflow-hidden">
         {/* Container for responsive table */}
         <div className="w-full overflow-x-auto">
-          <table className="w-full text-left min-w-[800px]">
+          <table className="w-full text-left min-w-[600px] lg:min-w-[800px]">
             <thead className="bg-nude-50 border-b border-nude-100">
               <tr>
                 <th className="px-6 lg:px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-nude-300">
