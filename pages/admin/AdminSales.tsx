@@ -139,7 +139,8 @@ export const AdminSales: React.FC = () => {
       </div>
 
       <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-sm border border-nude-100 overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Container for responsive table */}
+        <div className="w-full overflow-x-auto">
           <table className="w-full text-left min-w-[900px]">
             <thead className="bg-nude-50 border-b border-nude-100">
               <tr>

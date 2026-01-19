@@ -2,6 +2,11 @@ import { GoogleGenAI } from "@google/genai";
 import { DISABLE_GEMINI } from "../constants";
 import { ImageSize, Product } from "../types";
 
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export class GeminiService {
   /**
    * Checks if the API Key is provided in the environment.
@@ -19,6 +24,47 @@ export class GeminiService {
       throw new Error("API_KEY_MISSING");
     }
     return new GoogleGenAI({ apiKey: process.env.API_KEY });
+  }
+
+  /**
+   * Chat with history context
+   */
+  static async chat(history: Message[], useTestImages: boolean = false) {
+    if (DISABLE_GEMINI) return { role: "assistant", content: "AI is disabled." };
+    if (!this.isConfigured()) return { role: "assistant", content: "API Key missing." };
+
+    try {
+      const ai = this.getAI();
+      const lastMessage = history[history.length - 1];
+
+      // Convert history to format for generateContent with contents array
+      const contents = history.slice(0, -1).map(msg => ({
+        role: msg.role === "assistant" ? "model" : "user",
+        parts: [{ text: msg.content }],
+      }));
+
+      // Add the latest message
+      contents.push({
+        role: "user",
+        parts: [{ text: lastMessage.content }],
+      });
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: contents,
+        config: {
+          systemInstruction: "You are a helpful and quick assistant for Digrazia Brothers, a luxury furniture store. Keep answers concise and elegant. Use Markdown for formatting. If the user asks for design advice, be sophisticated.",
+        },
+      });
+      
+      return {
+        role: "assistant",
+        content: response.text,
+      };
+    } catch (error) {
+      console.error("Gemini Chat Error:", error);
+      throw error;
+    }
   }
 
   /**
@@ -115,8 +161,13 @@ export class GeminiService {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String = (reader.result as string).split(",")[1];
-        resolve(base64String);
+        // Just return the raw base64 string without data prefix, 
+        // to be consistent with how we use it in visualizeInSpace for the furniture image
+        // BUT wait, visualizeInSpace was updated to handle roomImage with prefix.
+        // Let's make this return valid Base64 string only
+        const res = reader.result as string;
+        const base64 = res.includes(',') ? res.split(',')[1] : res;
+        resolve(base64);
       };
       reader.onerror = reject;
       reader.readAsDataURL(blob);
@@ -142,13 +193,13 @@ export class GeminiService {
         parts: [
           {
             inlineData: {
-              data: roomImageBase64.split(",")[1],
+              data: roomImageBase64.replace(/^data:image\/\w+;base64,/, ""),
               mimeType: "image/jpeg",
             },
           },
           {
             inlineData: {
-              data: furnitureImageBase64,
+              data: furnitureImageBase64, // Already stripped of prefix in urlToBase64? No, urlToBase64 strips it.
               mimeType: "image/jpeg",
             },
           },
