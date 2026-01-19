@@ -26,7 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const isSolid = solid || isScrolled;
   
   // Calculate final Z-index to ensure menu stays on top
-  const zIndex = isMobileMenuOpen ? "z-[60]" : "z-40";
+  const zIndex = isMobileMenuOpen ? "z-[70]" : "z-40";
 
   return (
     <nav
