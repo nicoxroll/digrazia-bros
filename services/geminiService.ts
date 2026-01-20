@@ -16,6 +16,15 @@ export class GeminiService {
     return Boolean(apiKey && apiKey !== "" && apiKey !== "undefined");
   }
 
+  private static getAI() {
+    const apiKey = import.meta.env.VITE_API_KEY || (typeof process !== 'undefined' ? process.env.VITE_API_KEY : undefined);
+    if (!apiKey) {
+      throw new Error("API_KEY_MISSING");
+    }
+    // @google/genai requires an object with apiKey property
+    return new GoogleGenAI({ apiKey });
+  }
+
   private client: GoogleGenAI;
 
   constructor() {

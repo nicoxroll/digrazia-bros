@@ -1,6 +1,6 @@
 import { Product } from "./types";
 
-export const DISABLE_GEMINI = true;
+export const DISABLE_GEMINI = false;
 
 export const PRODUCTS: Product[] = [
   {
