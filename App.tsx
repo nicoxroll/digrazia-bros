@@ -126,7 +126,7 @@ const AppContent: React.FC = () => {
         </>
       )}
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col w-full min-h-0">
         {!isAdminView && !isLoginPage && (
           <Navbar
             cartCount={cartCount}
@@ -141,7 +141,7 @@ const AppContent: React.FC = () => {
         )}
 
         <main
-          className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+          className={`flex-grow w-full transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
             isAdminView && adminUser
               ? `pt-24 lg:pt-16 p-4 lg:p-16 ${isAdminSidebarCollapsed ? "lg:ml-24" : "lg:ml-80"}`
               : ""

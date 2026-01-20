@@ -35,8 +35,23 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const loadConfig = async () => {
     try {
-      const data = await ConfigService.getConfig();
-      if (data) setConfig(data);
+      if (!ConfigService.isConfigured()) {
+        console.warn("Supabase not configured, using default config");
+        setIsLoading(false);
+        return;
+      }
+      
+      const { data, error } = await ConfigService.get();
+      if (data) {
+        setConfig(data);
+      } else if (error) {
+         // Create default config if it doesn't exist
+         console.warn("Config not found or error, trying to create default:", error);
+         try {
+             await ConfigService.initialize(defaultConfig);
+             setConfig(defaultConfig);
+         } catch(e) { console.error("Could not init config", e); }
+      }
     } catch (error) {
       console.error("Failed to load config:", error);
     } finally {
@@ -46,9 +61,11 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateConfig = async (updates: Partial<AppConfig>) => {
     try {
+        if (!ConfigService.isConfigured()) return;
+        
       // Optimistic update
       setConfig((prev) => ({ ...prev, ...updates }));
-      await ConfigService.updateConfig(updates);
+      await ConfigService.update(updates);
     } catch (error) {
       console.error("Failed to update config:", error);
       // Revert on error

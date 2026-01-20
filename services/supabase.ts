@@ -4,11 +4,19 @@ import { Product } from "../types";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error("Missing Supabase environment variables");
+export const isSupabaseConfigured = () => {
+  return !!supabaseUrl && !!supabaseAnonKey && 
+         supabaseUrl !== 'undefined' && supabaseAnonKey !== 'undefined';
+};
+
+if (!isSupabaseConfigured()) {
+  console.warn("Missing Supabase environment variables. Backend features will be disabled.");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder.supabase.co", 
+  supabaseAnonKey || "placeholder"
+);
 
 export const InventoryService = {
   async getProducts() {
@@ -110,7 +118,12 @@ export const InventoryService = {
 };
 
 export const ConfigService = {
-  async getConfig() {
+  isConfigured: isSupabaseConfigured,
+
+  async get() {
+    if (!isSupabaseConfigured()) return { data: null, error: null };
+    
+    // We try to access config, falling back to basic defaults if table missing
     const { data, error } = await supabase
       .from("config")
       .select("*")
@@ -118,24 +131,32 @@ export const ConfigService = {
       .single();
 
     if (error) {
-      console.warn("Error fetching config, using defaults:", error);
-      return {
-        id: 1,
-        ai_enabled: true,
-        ai_chat_enabled: true,
-        ai_simulation_enabled: true,
-        use_test_images: true,
-        maintenance_mode: false,
-      };
+      // Return null data so caller knows to use defaults
+      return { data: null, error };
     }
-    return data;
+    return { data: data as any, error: null };
   },
 
-  async updateConfig(updates: Partial<any>) {
+  async update(updates: Partial<any>) {
+    if (!isSupabaseConfigured()) return;
+
     const { data, error } = await supabase
       .from("config")
       .update(updates)
       .eq("id", 1)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async initialize(config: any) {
+    if (!isSupabaseConfigured()) return;
+
+    const { data, error } = await supabase
+      .from("config")
+      .upsert(config)
       .select()
       .single();
 

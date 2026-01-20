@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface NavbarProps {
   cartCount: number;
@@ -16,6 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -23,14 +24,47 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Stop Lenis scroll when mobile menu is open to prevent background scrolling
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      window.lenis?.stop();
+    } else {
+      window.lenis?.start();
+    }
+  }, [isMobileMenuOpen]);
+
+  const handleNavClick = (path: string) => {
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+      // Wait for menu to close and lenis to restart
+      setTimeout(() => {
+        if (location.pathname === path) {
+          window.lenis?.scrollTo(0);
+        }
+      }, 300);
+    } else {
+      if (location.pathname === path) {
+        window.lenis?.scrollTo(0);
+      }
+    }
+  };
+
+  const handleContactClick = () => {
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+      setTimeout(() => {
+        onContactClick?.();
+      }, 300);
+    } else {
+      onContactClick?.();
+    }
+  };
+
   const isSolid = solid || isScrolled;
   
-  // Calculate final Z-index to ensure menu stays on top
-  const zIndex = isMobileMenuOpen ? "z-[70]" : "z-40";
-
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 ${zIndex} transition-all duration-500 h-20 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-20 ${
         isSolid
           ? "bg-white/95 backdrop-blur-md border-b border-nude-100 shadow-sm py-4"
           : "bg-transparent py-6"
@@ -68,7 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <Link
             to="/"
-            onClick={() => window.lenis?.scrollTo(0)}
+            onClick={() => handleNavClick("/")}
             className={`font-serif text-xl md:text-3xl font-bold tracking-tighter transition-colors duration-500 flex items-center gap-2 md:gap-3 ${
               isSolid ? "text-nude-500" : "text-white drop-shadow-md"
             }`}
@@ -101,20 +135,20 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Link
             to="/"
-            onClick={() => window.lenis?.scrollTo(0)}
+            onClick={() => handleNavClick("/")}
             className="hover:text-pastel-clay transition-colors"
           >
             Home
           </Link>
           <Link
             to="/shop"
-            onClick={() => window.lenis?.scrollTo(0)}
+            onClick={() => handleNavClick("/shop")}
             className="hover:text-pastel-clay transition-colors"
           >
             Collections
           </Link>
           <button
-            onClick={onContactClick}
+            onClick={handleContactClick}
             className="hover:text-pastel-clay transition-colors uppercase tracking-widest font-bold"
           >
             Contact
@@ -155,8 +189,14 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Mobile Menu Overlay */}
-      <div
-        className={`fixed inset-0 bg-white z-[70] transition-transform duration-300 md:hidden flex flex-col ${
+      <div 
+        className={`fixed inset-0 bg-black/50 z-[60] transition-opacity duration-300 md:hidden ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+
+      {/* Mobile Menu Container */}
+      <aside 
+        className={`fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-white z-[70] transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] md:hidden flex flex-col shadow-2xl h-[100dvh] ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -192,29 +232,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex flex-col gap-8 text-xl font-bold uppercase tracking-widest text-nude-500">
             <Link
               to="/"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                window.lenis?.scrollTo(0);
-              }}
+              onClick={() => handleNavClick('/')}
               className="py-2 hover:text-pastel-clay transition-colors"
             >
               Home
             </Link>
             <Link
               to="/shop"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                window.lenis?.scrollTo(0);
-              }}
+              onClick={() => handleNavClick('/shop')}
               className="py-2 hover:text-pastel-clay transition-colors"
             >
               Collections
             </Link>
             <button
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                onContactClick?.();
-              }}
+              onClick={handleContactClick}
               className="py-2 text-left hover:text-pastel-clay transition-colors uppercase tracking-widest font-bold"
             >
               Contact
@@ -222,13 +253,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
         
-         {/* Footer branding inside menu */}
         <div className="p-8 border-t border-nude-100 bg-nude-50">
-           <p className="text-[10px] text-nude-300 font-bold uppercase tracking-widest">
-             © 2024 Digrazia Bros.
-           </p>
+           {/* Bottom branding or content can go here if needed later */}
         </div>
-      </div>
+      </aside>
+
     </nav>
   );
 };

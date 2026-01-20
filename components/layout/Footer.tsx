@@ -93,9 +93,7 @@ export const Footer: React.FC<FooterProps> = ({ onContactClick }) => {
               </svg>
             </span>
           </div>
-          <p className="mt-12 text-[10px] text-nude-600 uppercase tracking-[0.4em] font-bold">
-            © 2024 Digrazia Brothers Studio. All Rights Reserved.
-          </p>
+
         </div>
       </div>
     </footer>

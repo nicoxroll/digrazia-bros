@@ -138,3 +138,7 @@ html.lenis, html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+.flex-grow {
+  flex-grow: 1;
+}

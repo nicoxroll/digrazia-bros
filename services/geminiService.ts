@@ -12,18 +12,20 @@ export class GeminiService {
    * Checks if the API Key is provided in the environment.
    */
   static isConfigured(): boolean {
-    return (
-      !!process.env.API_KEY &&
-      process.env.API_KEY !== "undefined" &&
-      process.env.API_KEY !== ""
-    );
+    const apiKey = import.meta.env.VITE_API_KEY || (typeof process !== 'undefined' ? process.env.VITE_API_KEY : undefined);
+    return Boolean(apiKey && apiKey !== "" && apiKey !== "undefined");
   }
 
-  private static getAI() {
-    if (!this.isConfigured()) {
-      throw new Error("API_KEY_MISSING");
+  private client: GoogleGenAI;
+
+  constructor() {
+    const apiKey = import.meta.env.VITE_API_KEY || (typeof process !== 'undefined' ? process.env.VITE_API_KEY : undefined);
+
+    if (!apiKey) {
+      console.warn("Gemini API Key is not configured");
+       // Handle missing key gracefully if needed, or let throw later
     }
-    return new GoogleGenAI({ apiKey: process.env.API_KEY });
+    this.client = new GoogleGenAI(apiKey || "");
   }
 
   /**
