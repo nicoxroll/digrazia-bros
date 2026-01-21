@@ -48,7 +48,7 @@ export const AdminInventory: React.FC = () => {
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const ProductForm = ({
@@ -60,11 +60,11 @@ export const AdminInventory: React.FC = () => {
   }) => {
     const [name, setName] = useState(initialData?.name || "");
     const [category, setCategory] = useState(
-      initialData?.category || "Living Room"
+      initialData?.category || "Living Room",
     );
     const [price, setPrice] = useState(initialData?.price || 0);
     const [description, setDescription] = useState(
-      initialData?.description || ""
+      initialData?.description || "",
     );
     const [gallery, setGallery] = useState<string[]>(initialData?.images || []);
     const [primaryIndex, setPrimaryIndex] = useState(0);
@@ -509,8 +509,8 @@ export const AdminInventory: React.FC = () => {
             {isSaving
               ? "Saving..."
               : initialData
-              ? "Update Piece"
-              : "Add to Catalog"}
+                ? "Update Piece"
+                : "Add to Catalog"}
           </button>
         </div>
       </div>

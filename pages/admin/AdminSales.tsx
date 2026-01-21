@@ -84,7 +84,7 @@ export const AdminSales: React.FC = () => {
   const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
   const paginatedSales = filteredSales.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   return (
@@ -200,8 +200,8 @@ export const AdminSales: React.FC = () => {
                           sale.status === "Fulfilled"
                             ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                             : sale.status === "Processing"
-                            ? "bg-amber-50 text-amber-600 border-amber-100"
-                            : "bg-pastel-clay/10 text-pastel-clay border-pastel-clay/20"
+                              ? "bg-amber-50 text-amber-600 border-amber-100"
+                              : "bg-pastel-clay/10 text-pastel-clay border-pastel-clay/20"
                         }`}
                       >
                         {sale.status}

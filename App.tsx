@@ -1,6 +1,13 @@
 import Lenis from "lenis";
 import React, { useEffect, useRef, useState } from "react";
-import { Link, MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  MemoryRouter,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import { ChatWidget } from "./components/ChatWidget";
 import { AdminSidebar } from "./components/admin/AdminSidebar";
@@ -77,7 +84,7 @@ const AppContent: React.FC = () => {
       const existing = prev.find((i) => i.id === product.id);
       if (existing)
         return prev.map((i) =>
-          i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i,
         );
       return [...prev, { ...product, quantity: 1 }];
     });
@@ -88,7 +95,7 @@ const AppContent: React.FC = () => {
     setCart((prev) =>
       q <= 0
         ? prev.filter((i) => i.id !== id)
-        : prev.map((i) => (i.id === id ? { ...i, quantity: q } : i))
+        : prev.map((i) => (i.id === id ? { ...i, quantity: q } : i)),
     );
   };
 
@@ -107,19 +114,35 @@ const AppContent: React.FC = () => {
       {isAdminView && adminUser && (
         <>
           <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-nude-100 p-4 flex items-center justify-between">
-            <Link to="/" className="font-serif text-xl font-bold tracking-tighter text-nude-500">
+            <Link
+              to="/"
+              className="font-serif text-xl font-bold tracking-tighter text-nude-500"
+            >
               DIGRAZIA <span className="font-light">Bros.</span>
             </Link>
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="p-2 bg-nude-50 rounded-xl text-nude-500"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
             </button>
           </div>
           <AdminSidebar
             isCollapsed={isAdminSidebarCollapsed}
-            onToggle={() => setIsAdminSidebarCollapsed(!isAdminSidebarCollapsed)}
+            onToggle={() =>
+              setIsAdminSidebarCollapsed(!isAdminSidebarCollapsed)
+            }
             isMobileOpen={isMobileMenuOpen}
             onMobileClose={() => setIsMobileMenuOpen(false)}
           />
