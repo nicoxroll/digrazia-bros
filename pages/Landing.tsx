@@ -6,7 +6,6 @@ import { useParallax } from "../hooks/useParallax";
 import { useProducts } from "../hooks/useProducts";
 import { Product } from "../types";
 
-
 const ExpandingGridRow: React.FC<{
   products: Product[];
   onAddToCart: (p: Product) => void;
@@ -109,7 +108,9 @@ const ContactUs = forwardRef<HTMLElement>((props, ref) => {
                   <p className="text-xs uppercase tracking-widest text-nude-300 font-bold mb-1">
                     Location
                   </p>
-                  <p className="text-xl text-nude-500">Calle 14 y 57, La Plata</p>
+                  <p className="text-xl text-nude-500">
+                    Calle 14 y 57, La Plata
+                  </p>
                 </div>
               </div>
 
