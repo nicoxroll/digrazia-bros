@@ -68,17 +68,19 @@ export const AdminInventory: React.FC = () => {
     );
     const [gallery, setGallery] = useState<string[]>(initialData?.images || []);
     // Primary image is simply gallery[0], so we don't need primaryIndex
-    // const [primaryIndex, setPrimaryIndex] = useState(0); 
+    // const [primaryIndex, setPrimaryIndex] = useState(0);
     const [stock, setStock] = useState(initialData?.stock || 0);
     const [isUploading, setIsUploading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [lastUploadedUrl, setLastUploadedUrl] = useState<string | null>(null);
     const [isUrlInputOpen, setIsUrlInputOpen] = useState(false);
     const [urlInput, setUrlInput] = useState("");
-    
+
     // Drag and Drop States
     const [isDraggingFile, setIsDraggingFile] = useState(false);
-    const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
+    const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(
+      null,
+    );
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -97,9 +99,9 @@ export const AdminInventory: React.FC = () => {
         let url: string;
 
         if (config.use_test_images) {
-           // Simulate upload for test mode
-           await new Promise((resolve) => setTimeout(resolve, 1500));
-           const testImages = [
+          // Simulate upload for test mode
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+          const testImages = [
             "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=2070&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=2070&auto=format&fit=crop",
@@ -158,12 +160,12 @@ export const AdminInventory: React.FC = () => {
     const handleSortOver = (e: React.DragEvent, index: number) => {
       e.preventDefault();
       if (draggedItemIndex === null || draggedItemIndex === index) return;
-      
+
       const newGallery = [...gallery];
       const draggedItem = newGallery[draggedItemIndex];
       newGallery.splice(draggedItemIndex, 1);
       newGallery.splice(index, 0, draggedItem);
-      
+
       setGallery(newGallery);
       setDraggedItemIndex(index);
     };
@@ -361,7 +363,11 @@ export const AdminInventory: React.FC = () => {
               </div>
               <div className="text-center pointer-events-none">
                 <p className="text-xs font-bold text-nude-500">
-                  {isUploading ? "Uploading..." : isDraggingFile ? "Drop file here" : "Click or Drag to Upload"}
+                  {isUploading
+                    ? "Uploading..."
+                    : isDraggingFile
+                      ? "Drop file here"
+                      : "Click or Drag to Upload"}
                 </p>
                 <p className="text-[9px] text-nude-300">
                   Supports JPG, PNG, WEBP
@@ -427,9 +433,7 @@ export const AdminInventory: React.FC = () => {
                   i === 0
                     ? "border-pastel-clay shadow-xl scale-105 z-10"
                     : "border-white hover:border-nude-100"
-                } ${
-                  draggedItemIndex === i ? "opacity-50" : "opacity-100"
-                }`}
+                } ${draggedItemIndex === i ? "opacity-50" : "opacity-100"}`}
               >
                 <img
                   src={url}
@@ -437,7 +441,7 @@ export const AdminInventory: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                   <div className="text-[10px] text-white font-bold tracking-widest uppercase">
-                     {i === 0 ? "Main Image" : "Drag to Sort"}
+                    {i === 0 ? "Main Image" : "Drag to Sort"}
                   </div>
                   <button
                     onClick={() =>
