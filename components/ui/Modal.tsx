@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 declare global {
   interface Window {
@@ -45,17 +46,17 @@ export const Modal: React.FC<ModalProps> = ({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300"
       onWheel={(e) => e.stopPropagation()}
       onTouchMove={(e) => e.stopPropagation()}
     >
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-6xl min-h-[80vh] max-h-[95vh] bg-white rounded-[3rem] shadow-2xl border border-nude-100 overflow-hidden animate-in zoom-in-95 duration-500 flex flex-col">
+      <div className="relative w-full max-w-4xl lg:max-w-5xl h-auto max-h-[95vh] bg-white rounded-[3rem] shadow-2xl border border-nude-100 overflow-hidden animate-in zoom-in-95 duration-500 flex flex-col">
         <div className="p-6 lg:p-8 border-b border-nude-50 flex justify-between items-center flex-shrink-0">
           <h3 className="font-serif text-2xl lg:text-3xl text-nude-500 font-bold">
             {title}
@@ -90,6 +91,7 @@ export const Modal: React.FC<ModalProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

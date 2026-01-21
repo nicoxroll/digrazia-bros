@@ -141,10 +141,10 @@ const AppContent: React.FC = () => {
         )}
 
         <main
-          className={`flex-grow w-full transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+          className={`flex-grow transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
             isAdminView && adminUser
               ? `pt-24 lg:pt-16 p-4 lg:p-16 ${isAdminSidebarCollapsed ? "lg:ml-24" : "lg:ml-80"}`
-              : ""
+              : "w-full"
           }`}
         >
           <Routes>
