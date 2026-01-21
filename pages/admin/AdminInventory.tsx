@@ -67,13 +67,19 @@ export const AdminInventory: React.FC = () => {
       initialData?.description || "",
     );
     const [gallery, setGallery] = useState<string[]>(initialData?.images || []);
-    const [primaryIndex, setPrimaryIndex] = useState(0);
+    // Primary image is simply gallery[0], so we don't need primaryIndex
+    // const [primaryIndex, setPrimaryIndex] = useState(0); 
     const [stock, setStock] = useState(initialData?.stock || 0);
     const [isUploading, setIsUploading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [lastUploadedUrl, setLastUploadedUrl] = useState<string | null>(null);
     const [isUrlInputOpen, setIsUrlInputOpen] = useState(false);
     const [urlInput, setUrlInput] = useState("");
+    
+    // Drag and Drop States
+    const [isDraggingFile, setIsDraggingFile] = useState(false);
+    const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleAddImage = (url: string) => {
@@ -84,20 +90,16 @@ export const AdminInventory: React.FC = () => {
       fileInputRef.current?.click();
     };
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-
+    const processFile = async (file: File) => {
       setIsUploading(true);
       setLastUploadedUrl(null);
       try {
         let url: string;
 
         if (config.use_test_images) {
-          // Simulate upload for test mode
-          await new Promise((resolve) => setTimeout(resolve, 1500));
-          // Return a random furniture image from Unsplash
-          const testImages = [
+           // Simulate upload for test mode
+           await new Promise((resolve) => setTimeout(resolve, 1500));
+           const testImages = [
             "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=2070&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?q=80&w=2070&auto=format&fit=crop",
@@ -121,6 +123,55 @@ export const AdminInventory: React.FC = () => {
       }
     };
 
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) processFile(file);
+    };
+
+    // File Drag n Drop Handlers
+    const handleFileDragOver = (e: React.DragEvent) => {
+      e.preventDefault();
+      if (!isUploading) setIsDraggingFile(true);
+    };
+
+    const handleFileDragLeave = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDraggingFile(false);
+    };
+
+    const handleFileDrop = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDraggingFile(false);
+      const file = e.dataTransfer.files?.[0];
+      if (file && file.type.startsWith("image/")) {
+        processFile(file);
+      }
+    };
+
+    // Gallery Sorting Handlers
+    const handleSortStart = (e: React.DragEvent, index: number) => {
+      setDraggedItemIndex(index);
+      // DataTransfer effect allowed
+      e.dataTransfer.effectAllowed = "move";
+    };
+
+    const handleSortOver = (e: React.DragEvent, index: number) => {
+      e.preventDefault();
+      if (draggedItemIndex === null || draggedItemIndex === index) return;
+      
+      const newGallery = [...gallery];
+      const draggedItem = newGallery[draggedItemIndex];
+      newGallery.splice(draggedItemIndex, 1);
+      newGallery.splice(index, 0, draggedItem);
+      
+      setGallery(newGallery);
+      setDraggedItemIndex(index);
+    };
+
+    const handleSortEnd = () => {
+      setDraggedItemIndex(null);
+    };
+
     const handleSubmit = async () => {
       if (!name || !price) {
         alert("Please fill in required fields");
@@ -135,7 +186,7 @@ export const AdminInventory: React.FC = () => {
           price,
           description,
           images: gallery,
-          image: gallery[primaryIndex] || gallery[0] || "",
+          image: gallery[0] || "", // First image is always primary
           stock,
           rating: initialData?.rating || 5,
         };
@@ -275,8 +326,15 @@ export const AdminInventory: React.FC = () => {
 
             {/* Improved Upload Button Area */}
             <div
-              className="bg-nude-50 border-2 border-dashed border-nude-200 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all hover:bg-nude-100 hover:border-pastel-clay/50 group cursor-pointer active:scale-[0.99]"
+              className={`bg-nude-50 border-2 border-dashed rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all group cursor-pointer active:scale-[0.99] ${
+                isDraggingFile
+                  ? "border-pastel-clay bg-pastel-clay/10 scale-105"
+                  : "border-nude-200 hover:bg-nude-100 hover:border-pastel-clay/50"
+              }`}
               onClick={!isUploading ? handleUploadClick : undefined}
+              onDragOver={handleFileDragOver}
+              onDragLeave={handleFileDragLeave}
+              onDrop={handleFileDrop}
             >
               <div
                 className={`p-2 rounded-full bg-white shadow-sm transition-transform group-hover:scale-110 ${
@@ -301,9 +359,9 @@ export const AdminInventory: React.FC = () => {
                   </svg>
                 )}
               </div>
-              <div className="text-center">
+              <div className="text-center pointer-events-none">
                 <p className="text-xs font-bold text-nude-500">
-                  {isUploading ? "Uploading..." : "Click to Upload Image"}
+                  {isUploading ? "Uploading..." : isDraggingFile ? "Drop file here" : "Click or Drag to Upload"}
                 </p>
                 <p className="text-[9px] text-nude-300">
                   Supports JPG, PNG, WEBP
@@ -360,37 +418,27 @@ export const AdminInventory: React.FC = () => {
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
             {gallery.map((url, i) => (
               <div
-                key={i}
-                className={`group/img relative aspect-square rounded-2xl overflow-hidden border-4 transition-all ${
-                  primaryIndex === i
-                    ? "border-pastel-clay shadow-xl scale-105"
+                key={url} // Use URL as key for better reconciliation during drag
+                draggable
+                onDragStart={(e) => handleSortStart(e, i)}
+                onDragOver={(e) => handleSortOver(e, i)}
+                onDragEnd={handleSortEnd}
+                className={`group/img relative aspect-square rounded-2xl overflow-hidden border-4 transition-all cursor-move ${
+                  i === 0
+                    ? "border-pastel-clay shadow-xl scale-105 z-10"
                     : "border-white hover:border-nude-100"
+                } ${
+                  draggedItemIndex === i ? "opacity-50" : "opacity-100"
                 }`}
               >
                 <img
                   src={url}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110"
+                  className="w-full h-full object-cover pointer-events-none"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                  <button
-                    onClick={() => setPrimaryIndex(i)}
-                    className={`p-2 rounded-full shadow-2xl transition-all hover:scale-110 ${
-                      primaryIndex === i
-                        ? "bg-pastel-clay text-white"
-                        : "bg-white text-nude-500"
-                    }`}
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill={primaryIndex === i ? "currentColor" : "none"}
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-                    </svg>
-                  </button>
+                  <div className="text-[10px] text-white font-bold tracking-widest uppercase">
+                     {i === 0 ? "Main Image" : "Drag to Sort"}
+                  </div>
                   <button
                     onClick={() =>
                       setGallery(gallery.filter((_, idx) => idx !== i))
@@ -411,7 +459,7 @@ export const AdminInventory: React.FC = () => {
                     </svg>
                   </button>
                 </div>
-                {primaryIndex === i && (
+                {i === 0 && (
                   <div className="absolute top-2 left-2 bg-pastel-clay text-white px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest shadow-md">
                     Primary
                   </div>
