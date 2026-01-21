@@ -6,11 +6,6 @@ import { useParallax } from "../hooks/useParallax";
 import { useProducts } from "../hooks/useProducts";
 import { Product } from "../types";
 
-declare global {
-  interface Window {
-    L: any;
-  }
-}
 
 const ExpandingGridRow: React.FC<{
   products: Product[];
@@ -78,78 +73,6 @@ const ExpandingGridRow: React.FC<{
 };
 
 const ContactUs = forwardRef<HTMLElement>((props, ref) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (!mapRef.current) return;
-
-    const loadLeaflet = async () => {
-      if (!window.L) {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-        document.head.appendChild(link);
-
-        const script = document.createElement("script");
-        script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-        await new Promise((resolve) => {
-          script.onload = resolve;
-          document.head.appendChild(script);
-        });
-      }
-
-      const L = window.L;
-      if (!mapInstanceRef.current) {
-        // Plaza Moreno coordinates
-        const lat = -34.9213;
-        const lng = -57.9566;
-
-        mapInstanceRef.current = L.map(mapRef.current, {
-          center: [lat, lng],
-          zoom: 15,
-          scrollWheelZoom: false,
-          zoomControl: false,
-        });
-
-        L.tileLayer(
-          "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-          {
-            attribution:
-              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: "abcd",
-            maxZoom: 20,
-          }
-        ).addTo(mapInstanceRef.current);
-
-        // Custom Icon using favicon
-        const icon = L.icon({
-          iconUrl: "/icon-cream.svg",
-          iconSize: [40, 40],
-          iconAnchor: [20, 20],
-          popupAnchor: [0, -20],
-          className: "drop-shadow-lg",
-        });
-
-        L.marker([lat, lng], { icon })
-          .addTo(mapInstanceRef.current)
-          .bindPopup(
-            '<div class="text-center font-serif"><h3 class="font-bold">Digrazia Brothers</h3><p class="text-sm">Plaza Moreno</p></div>'
-          )
-          .openPopup();
-      }
-    };
-
-    loadLeaflet();
-
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-    };
-  }, []);
-
   return (
     <section
       ref={ref}
@@ -167,6 +90,29 @@ const ContactUs = forwardRef<HTMLElement>((props, ref) => {
             </h2>
 
             <div className="space-y-8 pt-8">
+              <div className="flex items-center gap-6 group">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md group-hover:bg-pastel-clay transition-colors group-hover:text-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-nude-300 font-bold mb-1">
+                    Location
+                  </p>
+                  <p className="text-xl text-nude-500">Calle 14 y 57, La Plata</p>
+                </div>
+              </div>
+
               <div className="flex items-center gap-6 group">
                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md group-hover:bg-pastel-clay transition-colors group-hover:text-white">
                   <svg
@@ -244,12 +190,14 @@ const ContactUs = forwardRef<HTMLElement>((props, ref) => {
           </div>
 
           <div className="relative group">
-            <div className="aspect-square bg-white rounded-[4rem] overflow-hidden shadow-2xl border-8 border-white relative z-10">
-              <div
-                ref={mapRef}
-                className="w-full h-full grayscale hover:grayscale-0 transition-all duration-700 z-10"
-                style={{ minHeight: "400px" }}
-              />
+            <div className="aspect-square bg-white rounded-[4rem] overflow-hidden shadow-2xl border-8 border-white relative z-10 group-hover:border-pastel-clay/20 transition-colors duration-500">
+              <iframe
+                src="https://maps.google.com/maps?q=Calle+14+y+57,+La+Plata&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                className="w-full h-full border-0 opacity-90 hover:opacity-100 transition-all duration-700"
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
             <div className="absolute -top-12 -left-12 w-64 h-64 bg-pastel-rose opacity-20 rounded-[4rem] -z-0"></div>
           </div>
