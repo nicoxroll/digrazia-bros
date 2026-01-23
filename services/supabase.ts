@@ -140,10 +140,30 @@ export const ConfigService = {
   async update(updates: Partial<any>) {
     if (!isSupabaseConfigured()) return;
 
+    // Get current config first to ensure we have all fields
+    const { data: currentConfig } = await supabase
+      .from("config")
+      .select("*")
+      .eq("id", 1)
+      .single();
+
+    // Default config fallback
+    const baseConfig = currentConfig || {
+      id: 1,
+      ai_enabled: true,
+      ai_chat_enabled: true,
+      ai_simulation_enabled: true,
+      use_test_images: true,
+      maintenance_mode: false,
+    };
+
+    // Merge updates
+    const newConfig = { ...baseConfig, ...updates };
+
+    // Use upsert instead of update to avoid CORS PATCH issues
     const { data, error } = await supabase
       .from("config")
-      .update(updates)
-      .eq("id", 1)
+      .upsert(newConfig, { onConflict: 'id' })
       .select()
       .single();
 
