@@ -5,17 +5,23 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const isSupabaseConfigured = () => {
-  return !!supabaseUrl && !!supabaseAnonKey && 
-         supabaseUrl !== 'undefined' && supabaseAnonKey !== 'undefined';
+  return (
+    !!supabaseUrl &&
+    !!supabaseAnonKey &&
+    supabaseUrl !== "undefined" &&
+    supabaseAnonKey !== "undefined"
+  );
 };
 
 if (!isSupabaseConfigured()) {
-  console.warn("Missing Supabase environment variables. Backend features will be disabled.");
+  console.warn(
+    "Missing Supabase environment variables. Backend features will be disabled.",
+  );
 }
 
 export const supabase = createClient(
-  supabaseUrl || "https://placeholder.supabase.co", 
-  supabaseAnonKey || "placeholder"
+  supabaseUrl || "https://placeholder.supabase.co",
+  supabaseAnonKey || "placeholder",
 );
 
 export const InventoryService = {
@@ -90,7 +96,7 @@ export const InventoryService = {
             else reject(new Error("WebP conversion failed"));
           },
           "image/webp",
-          0.8
+          0.8,
         ); // 0.8 quality for efficiency
       };
       img.onerror = (e) => reject(e);
@@ -122,7 +128,7 @@ export const ConfigService = {
 
   async get() {
     if (!isSupabaseConfigured()) return { data: null, error: null };
-    
+
     // We try to access config, falling back to basic defaults if table missing
     const { data, error } = await supabase
       .from("config")
@@ -163,7 +169,7 @@ export const ConfigService = {
     // Use upsert instead of update to avoid CORS PATCH issues
     const { data, error } = await supabase
       .from("config")
-      .upsert(newConfig, { onConflict: 'id' })
+      .upsert(newConfig, { onConflict: "id" })
       .select()
       .single();
 
