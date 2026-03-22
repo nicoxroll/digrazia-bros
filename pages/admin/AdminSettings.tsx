@@ -5,8 +5,16 @@ export const AdminSettings: React.FC = () => {
   const { config, updateConfig, isLoading } = useConfig();
 
   const handleToggle = (key: keyof typeof config) => {
-    updateConfig({ [key]: !config[key] });
-  };
+    const newValue = !config[key];
+    updateConfig({ [key]: newValue });
+    // Sync with localStorage if toggling use_test_images
+    if (key === "use_test_images") {
+      // useProducts espera "false" para usar Supabase, cualquier otro valor usa test
+      localStorage.setItem("useTestImages", newValue ? "true" : "false");
+      // Trigger storage event for current tab
+      window.dispatchEvent(new StorageEvent("storage", { key: "useTestImages", newValue: newValue ? "true" : "false" }));
+    }
+  } 
 
   if (isLoading) {
     return (
